@@ -386,3 +386,40 @@ footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; mar
     from { transform: scale(0.9); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+/* ==========================================================================
+   MOBILE MENU DROPDOWN FIX
+   ========================================================================== */
+@media (max-width: 1023px) {
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--card-bg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border-top: 1px solid var(--border-color);
+    
+    /* Ẩn menu bằng cách gập nó lại */
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); 
+    transition: clip-path 0.3s ease-in-out;
+  }
+  
+  /* Khi có class active (được bấm), menu sẽ bung ra */
+  .nav-links.active {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); 
+  }
+  
+  .nav-links li {
+    width: 100%;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 0;
+  }
+  
+  .nav-links li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
