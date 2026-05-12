@@ -162,6 +162,10 @@ function validateBooking(input) {
   if (missing.length) {
     return `Missing fields: ${missing.join(', ')}`;
   }
+  const phone = String(input.phone || '').replace(/\D/g, '');
+  if (phone.length < 9 || phone.length > 11) {
+    return 'Phone must contain 9 to 11 digits.';
+  }
   return null;
 }
 
@@ -296,12 +300,14 @@ async function router(req, res) {
       const booking = {
         id: crypto.randomUUID(),
         name: body.name.trim(),
-        phone: body.phone.trim(),
+        phone: String(body.phone || '').replace(/\D/g, ''),
         service: body.service.trim(),
         date: body.date,
         time: body.time,
         note: String(body.note || '').trim(),
         status: 'new',
+        rescheduledDate: '',
+        rescheduledTime: '',
         createdAt: new Date().toISOString(),
       };
       bookings.unshift(booking);

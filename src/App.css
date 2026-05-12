@@ -378,26 +378,30 @@ header {
 }
 .gallery-rail {
     width: 100%;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     padding: 4px 0 12px;
     touch-action: pan-y;
+    cursor: grab;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    user-select: none;
+    -webkit-overflow-scrolling: touch;
+}
+.gallery-rail::-webkit-scrollbar {
+    display: none;
+}
+.gallery-rail:active {
+    cursor: grabbing;
 }
 .gallery-track {
     display: flex;
     gap: 16px;
     width: max-content;
-    animation: gallery-scroll var(--duration, 40s) linear infinite;
-    will-change: transform;
 }
 .gallery-track.is-static {
-    animation: none;
     width: 100%;
     justify-content: center;
-}
-.gallery-rail:hover .gallery-track,
-.gallery-rail:focus-within .gallery-track,
-.gallery-rail.is-paused .gallery-track {
-    animation-play-state: paused;
 }
 .gallery-slide {
     flex: 0 0 clamp(220px, 72vw, 340px);
@@ -408,7 +412,7 @@ header {
     box-shadow: var(--shadow-sm);
     overflow: hidden;
     position: relative;
-    cursor: zoom-in;
+    cursor: pointer;
     padding: 0;
 }
 .gallery-slide img {
@@ -417,6 +421,7 @@ header {
     object-fit: cover;
     object-position: top;
     transition: transform 0.4s ease;
+    pointer-events: none;
 }
 .gallery-slide:hover img,
 .gallery-slide:focus-visible img {
@@ -439,19 +444,9 @@ header {
     margin-bottom: 80px;
 }
 
-@keyframes gallery-scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-    .gallery-track {
-        animation: none;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        width: 100%;
-        padding: 0 20px;
-        scroll-snap-type: x mandatory;
+    .gallery-rail {
+        scroll-snap-type: x proximity;
     }
     .gallery-slide {
         scroll-snap-align: center;
@@ -503,19 +498,21 @@ header {
     font-size: clamp(2rem, 4vw, 3rem);
 }
 .admin-tabs {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
     margin-bottom: 20px;
-    overflow-x: auto;
 }
 .admin-tabs button {
     border: 1px solid var(--border-color);
     background: var(--card-bg);
     border-radius: var(--radius-btn);
-    padding: 10px 18px;
+    min-width: 0;
+    padding: 10px 8px;
     cursor: pointer;
-    font: inherit;
-    white-space: nowrap;
+    font: 600 clamp(0.72rem, 2.8vw, 1rem) var(--font-body);
+    white-space: normal;
+    line-height: 1.2;
 }
 .admin-tabs button.active {
     background: var(--primary);
@@ -647,6 +644,27 @@ header {
     flex-direction: column;
     gap: 12px;
 }
+.booking-filter-tabs {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.booking-filter-tabs button {
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    border-radius: var(--radius-inner);
+    padding: 10px 6px;
+    font: 600 clamp(0.68rem, 2.5vw, 0.9rem) var(--font-body);
+    color: var(--text-dark);
+    cursor: pointer;
+    line-height: 1.2;
+}
+.booking-filter-tabs button.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
 .booking-row {
     display: grid;
     grid-template-columns: 1fr;
@@ -657,6 +675,16 @@ header {
 }
 .booking-row p {
     margin: 4px 0 0;
+}
+.booking-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.booking-reschedule {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
 }
 .admin-savebar {
     position: sticky;
@@ -698,7 +726,7 @@ footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; mar
     .admin-repeat { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .admin-section-meta { grid-template-columns: 320px 1fr; }
     .admin-image-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .booking-row { grid-template-columns: 1fr 180px; align-items: center; }
+    .booking-row { grid-template-columns: 1fr 240px; align-items: center; }
 }
 
 @media (min-width: 1024px) {

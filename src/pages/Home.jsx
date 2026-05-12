@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api, resolveMediaUrl } from '../api';
 
 const fallbackContent = {
@@ -40,7 +40,97 @@ function getGallerySections(site) {
 function GalleryRail({ section, openLightbox }) {
   const images = section.images || [];
   const repeatedImages = images.length > 1 ? [...images, ...images] : images;
-  const duration = `${Math.max(32, images.length * 9)}s`;
+  const railRef = useRef(null);
+  const dragRef = useRef({
+    dragged: false,
+    dragging: false,
+    paused: false,
+    pointerId: null,
+    startScroll: 0,
+    startX: 0,
+  });
+  const resumeTimerRef = useRef(null);
+
+  useEffect(() => () => window.clearTimeout(resumeTimerRef.current), []);
+
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail || images.length < 2) return undefined;
+
+    let frame = 0;
+    let lastTime = performance.now();
+
+    const tick = (time) => {
+      const state = dragRef.current;
+      const distance = time - lastTime;
+      const resetAt = rail.scrollWidth / 2;
+
+      if (!state.paused && !state.dragging && resetAt > rail.clientWidth) {
+        rail.scrollLeft += distance * 0.018;
+        if (rail.scrollLeft >= resetAt) {
+          rail.scrollLeft -= resetAt;
+        }
+      }
+
+      lastTime = time;
+      frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [images.length]);
+
+  const pause = () => {
+    window.clearTimeout(resumeTimerRef.current);
+    dragRef.current.paused = true;
+  };
+
+  const resumeSoon = () => {
+    window.clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = window.setTimeout(() => {
+      dragRef.current.paused = false;
+    }, 900);
+  };
+
+  const startDrag = (event) => {
+    const rail = railRef.current;
+    if (!rail) return;
+
+    pause();
+    dragRef.current = {
+      ...dragRef.current,
+      dragged: false,
+      dragging: true,
+      pointerId: event.pointerId,
+      startScroll: rail.scrollLeft,
+      startX: event.clientX,
+    };
+    rail.setPointerCapture?.(event.pointerId);
+  };
+
+  const drag = (event) => {
+    const rail = railRef.current;
+    const state = dragRef.current;
+    if (!rail || !state.dragging || state.pointerId !== event.pointerId) return;
+
+    const delta = event.clientX - state.startX;
+    if (Math.abs(delta) > 4) state.dragged = true;
+    rail.scrollLeft = state.startScroll - delta;
+  };
+
+  const stopDrag = (event) => {
+    const rail = railRef.current;
+    if (rail && dragRef.current.pointerId === event.pointerId) {
+      rail.releasePointerCapture?.(event.pointerId);
+    }
+
+    dragRef.current.dragging = false;
+    dragRef.current.pointerId = null;
+    window.setTimeout(() => {
+      dragRef.current.dragged = false;
+    }, 120);
+    resumeSoon();
+  };
 
   if (!images.length) return null;
 
@@ -54,12 +144,32 @@ function GalleryRail({ section, openLightbox }) {
         <p>{section.description}</p>
       </div>
 
-      <div className="gallery-rail" onTouchStart={(event) => event.currentTarget.classList.add('is-paused')} onTouchEnd={(event) => event.currentTarget.classList.remove('is-paused')}>
-        <div className={`gallery-track ${images.length < 2 ? 'is-static' : ''}`} style={{ '--duration': duration }}>
+      <div
+        className="gallery-rail"
+        ref={railRef}
+        onMouseEnter={pause}
+        onMouseLeave={resumeSoon}
+        onPointerDown={startDrag}
+        onPointerMove={drag}
+        onPointerUp={stopDrag}
+        onPointerCancel={stopDrag}
+      >
+        <div className={`gallery-track ${images.length < 2 ? 'is-static' : ''}`}>
           {repeatedImages.map((image, index) => {
             const imageUrl = resolveMediaUrl(image.url);
             return (
-              <button className="gallery-slide" type="button" key={`${image.url}-${index}`} onClick={() => openLightbox(imageUrl)}>
+              <button
+                className="gallery-slide"
+                type="button"
+                key={`${image.url}-${index}`}
+                onClick={(event) => {
+                  if (dragRef.current.dragged) {
+                    event.preventDefault();
+                    return;
+                  }
+                  openLightbox(imageUrl);
+                }}
+              >
                 <img src={imageUrl} alt={image.title || section.label} loading="lazy" />
                 {image.title && <span>{image.title}</span>}
               </button>
@@ -87,6 +197,10 @@ export default function Home({ content, openLightbox }) {
 
   const updateBooking = (field, value) => {
     setBooking((current) => ({ ...current, [field]: value }));
+  };
+
+  const updatePhone = (value) => {
+    updateBooking('phone', value.replace(/\D/g, '').slice(0, 11));
   };
 
   const submitBooking = async (event) => {
@@ -199,7 +313,17 @@ export default function Home({ content, openLightbox }) {
           <div className="bento-card book-2">
             <form className="booking-form" onSubmit={submitBooking}>
               <input className="input-field" value={booking.name} onChange={(event) => updateBooking('name', event.target.value)} placeholder="Họ và tên" required />
-              <input className="input-field" value={booking.phone} onChange={(event) => updateBooking('phone', event.target.value)} placeholder="Số điện thoại" required />
+              <input
+                className="input-field"
+                value={booking.phone}
+                onChange={(event) => updatePhone(event.target.value)}
+                placeholder="Số điện thoại"
+                inputMode="numeric"
+                pattern="[0-9]{9,11}"
+                minLength="9"
+                maxLength="11"
+                required
+              />
               <select className="input-field" value={booking.service} onChange={(event) => updateBooking('service', event.target.value)} required>
                 {(site.booking.services || []).map((service) => <option key={service}>{service}</option>)}
               </select>

@@ -23,6 +23,13 @@ const defaultAftercare = {
     secondaryText: 'Chat Messenger',
   },
 };
+const bookingTabs = [
+  { id: 'new', label: 'Khách mới' },
+  { id: 'confirmed', label: 'Đã xác nhận' },
+  { id: 'rescheduled', label: 'Hẹn lại' },
+  { id: 'done', label: 'Hoàn thành' },
+  { id: 'cancelled', label: 'Đã hủy' },
+];
 
 function Field({ label, children }) {
   return (
@@ -53,6 +60,7 @@ export default function Admin({ initialContent, setContent }) {
   const [bookings, setBookings] = useState([]);
   const [status, setStatus] = useState('');
   const [activeTab, setActiveTab] = useState('content');
+  const [bookingView, setBookingView] = useState('new');
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(api.getAdminToken()));
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -280,12 +288,32 @@ export default function Admin({ initialContent, setContent }) {
 
   const updateBookingStatus = async (bookingId, value) => {
     try {
-      const updated = await api.updateBooking(bookingId, { status: value });
+      const changes = { status: value };
+      if (value === 'rescheduled') {
+        const booking = bookings.find((item) => item.id === bookingId);
+        changes.rescheduledDate = booking?.rescheduledDate || booking?.date || '';
+        changes.rescheduledTime = booking?.rescheduledTime || booking?.time || '';
+      }
+      const updated = await api.updateBooking(bookingId, changes);
       setBookings((current) => current.map((booking) => booking.id === bookingId ? updated : booking));
     } catch (error) {
       handleAuthError(error);
     }
   };
+
+  const updateBookingSchedule = async (bookingId, field, value) => {
+    try {
+      const updated = await api.updateBooking(bookingId, {
+        status: 'rescheduled',
+        [field]: value,
+      });
+      setBookings((current) => current.map((booking) => booking.id === bookingId ? updated : booking));
+    } catch (error) {
+      handleAuthError(error);
+    }
+  };
+
+  const filteredBookings = bookings.filter((booking) => (booking.status || 'new') === bookingView);
 
   if (!isAuthenticated) {
     return (
@@ -553,23 +581,57 @@ export default function Admin({ initialContent, setContent }) {
 
       {activeTab === 'bookings' && (
         <section className="admin-panel">
-          <h2>Lịch hẹn mới</h2>
+          <h2>Lịch hẹn</h2>
+          <div className="booking-filter-tabs" role="tablist" aria-label="Lọc lịch hẹn">
+            {bookingTabs.map((tab) => (
+              <button
+                className={bookingView === tab.id ? 'active' : ''}
+                type="button"
+                onClick={() => setBookingView(tab.id)}
+                key={tab.id}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
           <div className="booking-table">
-            {bookings.length === 0 && <p>Chưa có lịch hẹn.</p>}
-            {bookings.map((booking) => (
+            {filteredBookings.length === 0 && <p>Chưa có lịch hẹn trong mục này.</p>}
+            {filteredBookings.map((booking) => (
               <div className="booking-row" key={booking.id}>
                 <div>
                   <strong>{booking.name}</strong>
                   <p>{booking.phone} · {booking.service}</p>
                   <p>{booking.date} lúc {booking.time}</p>
+                  {booking.status === 'rescheduled' && (
+                    <p>Hẹn lại: {booking.rescheduledDate || 'chưa chọn ngày'} lúc {booking.rescheduledTime || 'chưa chọn giờ'}</p>
+                  )}
                   {booking.note && <p>{booking.note}</p>}
                 </div>
-                <select value={booking.status} onChange={(event) => updateBookingStatus(booking.id, event.target.value)}>
-                  <option value="new">Mới</option>
-                  <option value="confirmed">Đã xác nhận</option>
-                  <option value="done">Hoàn thành</option>
-                  <option value="cancelled">Hủy</option>
-                </select>
+                <div className="booking-actions">
+                  <select value={booking.status || 'new'} onChange={(event) => updateBookingStatus(booking.id, event.target.value)}>
+                    <option value="new">Khách mới</option>
+                    <option value="confirmed">Đã xác nhận</option>
+                    <option value="rescheduled">Khách hẹn lại</option>
+                    <option value="done">Hoàn thành</option>
+                    <option value="cancelled">Hủy</option>
+                  </select>
+                  {booking.status === 'rescheduled' && (
+                    <div className="booking-reschedule">
+                      <input
+                        className="input-field"
+                        type="date"
+                        value={booking.rescheduledDate || ''}
+                        onChange={(event) => updateBookingSchedule(booking.id, 'rescheduledDate', event.target.value)}
+                      />
+                      <input
+                        className="input-field"
+                        type="time"
+                        value={booking.rescheduledTime || ''}
+                        onChange={(event) => updateBookingSchedule(booking.id, 'rescheduledTime', event.target.value)}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
