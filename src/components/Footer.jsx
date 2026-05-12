@@ -1,28 +1,33 @@
-import React from 'react';
+export default function Footer({ setPage, content }) {
+  const brand = content?.brand;
+  const services = content?.booking?.services || [
+    'Điêu khắc Hairstroke',
+    'Phun môi Nano',
+    'Uốn mi',
+    'Nối mi thiết kế',
+    'Xóa sửa mày cũ',
+  ];
 
-export default function Footer({ setPage }) {
   return (
     <footer className="container">
       <div className="footer-grid">
         <div className="footer-col">
           <a onClick={() => setPage('home')} className="logo" style={{ marginBottom: '8px' }}>
-            <i className="ph-light ph-flower-lotus"></i> Phương Beauty
+            <i className="ph-light ph-flower-lotus"></i> {brand?.name || 'Phuong Beauty'}
           </a>
-          <p className="text-small">Đánh thức vẻ đẹp tự nhiên ẩn sâu bên trong bạn bằng nghệ thuật phun xăm phong thủy và nối mi thiết kế chuyên nghiệp.</p>
+          <p className="text-small">{brand?.tagline || 'Đánh thức vẻ đẹp tự nhiên bằng nghệ thuật phun xăm và nối mi chuyên nghiệp.'}</p>
           <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
-            <a href="https://www.facebook.com/phuongphuongnoimi" target="_blank" rel="noopener noreferrer" style={{ fontSize: '24px' }}><i className="ph-light ph-facebook-logo"></i></a>
+            <a href={brand?.facebook || '#'} target="_blank" rel="noopener noreferrer" style={{ fontSize: '24px' }}><i className="ph-light ph-facebook-logo"></i></a>
             <a href="#" style={{ fontSize: '24px' }}><i className="ph-light ph-instagram-logo"></i></a>
-            <a href="https://www.tiktok.com/@phuongphunxamnoimi?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" style={{ fontSize: '24px' }}><i className="ph-light ph-tiktok-logo"></i></a>
+            <a href={brand?.tiktok || '#'} target="_blank" rel="noopener noreferrer" style={{ fontSize: '24px' }}><i className="ph-light ph-tiktok-logo"></i></a>
           </div>
         </div>
         <div className="footer-col">
           <h4>Dịch vụ</h4>
           <ul>
-            <li><a onClick={() => setPage('home')}>Điêu khắc Hairstroke</a></li>
-            <li><a onClick={() => setPage('home')}>Phun mày Shading</a></li>
-            <li><a onClick={() => setPage('home')}>Phun môi Nano / Collagen</a></li>
-            <li><a onClick={() => setPage('home')}>Uốn mi / Nối mi thiết kế</a></li>
-            <li><a onClick={() => setPage('home')}>Xóa sửa mày cũ</a></li>
+            {services.slice(0, 5).map((service) => (
+              <li key={service}><a onClick={() => setPage('home')}>{service}</a></li>
+            ))}
           </ul>
         </div>
         <div className="footer-col">
@@ -39,15 +44,15 @@ export default function Footer({ setPage }) {
           <ul>
             <li style={{ display: 'flex', gap: '8px', color: 'var(--text-muted)', fontSize: 'var(--fs-small)' }}>
               <i className="ph-light ph-map-pin" style={{ fontSize: '18px', color: 'var(--primary)', flexShrink: 0 }}></i>
-              <span>Cần Thơ</span>
+              <span>{brand?.location || 'Cần Thơ'}</span>
             </li>
             <li style={{ display: 'flex', gap: '8px', color: 'var(--text-muted)', fontSize: 'var(--fs-small)' }}>
               <i className="ph-light ph-phone" style={{ fontSize: '18px', color: 'var(--primary)', flexShrink: 0 }}></i>
-              <a href="tel:0939732506">093.973.2506</a>
+              <a href={`tel:${brand?.phoneRaw || '0939732506'}`}>{brand?.phone || '093.973.2506'}</a>
             </li>
             <li style={{ display: 'flex', gap: '8px', color: 'var(--text-muted)', fontSize: 'var(--fs-small)' }}>
               <i className="ph-light ph-clock" style={{ fontSize: '18px', color: 'var(--primary)', flexShrink: 0 }}></i>
-              <span>Mở cửa: 9:00 - 20:00 (Thứ 2 - CN)</span>
+              <span>Mở cửa: {brand?.hours || '9:00 - 20:00 (Thứ 2 - CN)'}</span>
             </li>
           </ul>
         </div>

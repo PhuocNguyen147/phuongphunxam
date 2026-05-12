@@ -1,16 +1,31 @@
-# React + Vite
+# Phuong Beauty
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Website React + Vite co backend Node nho de quan ly noi dung, hinh anh va lich hen.
 
-Currently, two official plugins are available:
+## Chay tren may
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run server
+npm run dev
+```
 
-## React Compiler
+- Website: http://127.0.0.1:5173
+- Admin: http://127.0.0.1:5173/admin
+- Backend API: http://localhost:8787
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Mat khau admin mac dinh khi chua cau hinh bien moi truong la `admin123`.
+Khi deploy that, hay doi `ADMIN_PASSWORD` va `ADMIN_TOKEN_SECRET`.
 
-## Expanding the ESLint configuration
+## Build production
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm run build
+npm start
+```
+
+Sau khi build, `server.js` se phuc vu ca API va website trong thu muc `dist`.
+
+## File huong dan
+
+Xem [HUONG_DAN_SU_DUNG.md](./HUONG_DAN_SU_DUNG.md) de biet cach su dung admin, noi luu database va cach deploy mien phi.

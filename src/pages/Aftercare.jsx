@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function Aftercare() {
   return (
     <main className="section-gap" style={{ marginBottom: '60px' }}>

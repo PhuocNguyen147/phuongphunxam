@@ -1,39 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Aftercare from './pages/Aftercare';
+import Admin from './pages/Admin';
+import { api } from './api';
 import './App.css';
 
 export default function App() {
-  const [page, setPage] = useState('home');
+  const [page, setPage] = useState(window.location.pathname === '/admin' ? 'admin' : 'home');
   const [lightboxImg, setLightboxImg] = useState(null);
+  const [content, setContent] = useState(null);
+  const [contentError, setContentError] = useState('');
 
-  const openLightbox = (src) => setLightboxImg(src);
-  const closeLightbox = () => setLightboxImg(null);
+  useEffect(() => {
+    api.getContent()
+      .then(setContent)
+      .catch(() => setContentError('Backend chưa chạy, vui lòng bật npm run server.'));
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [page]);
 
-  const handleMobileMenu = () => {
-    alert('Chức năng menu mobile sẽ mở ra một popup/drawer tại đây.');
-  };
-
   return (
     <>
-      <Header page={page} setPage={setPage} handleMobileMenu={handleMobileMenu} />
+      {page !== 'admin' && <Header page={page} setPage={setPage} content={content} />}
 
-      {/* Hiển thị trang dựa vào state */}
-      {page === 'home' ? <Home openLightbox={openLightbox} /> : <Aftercare />}
+      {contentError && <div className="server-alert">{contentError}</div>}
 
-      <Footer setPage={setPage} />
+      {page === 'admin' ? (
+        <Admin key={content ? 'admin-ready' : 'admin-loading'} initialContent={content} setContent={setContent} />
+      ) : page === 'home' ? (
+        <Home content={content} openLightbox={setLightboxImg} />
+      ) : (
+        <Aftercare />
+      )}
 
-      {/* Lightbox Xem Ảnh dùng chung */}
+      {page !== 'admin' && <Footer setPage={setPage} content={content} />}
+
       {lightboxImg && (
-        <div className="lightbox" onClick={closeLightbox}>
-          <span className="lightbox-close" onClick={closeLightbox}>&times;</span>
-          <img className="lightbox-content" src={lightboxImg} alt="Phóng to" onClick={(e) => e.stopPropagation()} />
+        <div className="lightbox" onClick={() => setLightboxImg(null)}>
+          <span className="lightbox-close" onClick={() => setLightboxImg(null)}>&times;</span>
+          <img
+            className="lightbox-content"
+            src={lightboxImg}
+            alt="Phóng to"
+            onClick={(event) => event.stopPropagation()}
+          />
         </div>
       )}
     </>

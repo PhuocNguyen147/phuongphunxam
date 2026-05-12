@@ -1,0 +1,142 @@
+{
+  "brand": {
+    "name": "Phuong Beauty",
+    "tagline": "Đánh thức vẻ đẹp tự nhiên bằng phun xăm phong thủy và nối mi thiết kế.",
+    "phone": "093.973.2506",
+    "phoneRaw": "0939732506",
+    "location": "Cần Thơ",
+    "hours": "9:00 - 20:00 (Thứ 2 - CN)",
+    "facebook": "https://www.facebook.com/PhuongPhunXamThamMy",
+    "messenger": "https://m.me/PhuongPhunXamThamMy",
+    "tiktok": "https://www.tiktok.com/@phuongphunxamnoimi?is_from_webapp=1&sender_device=pc"
+  },
+  "hero": {
+    "badge": "Ưu đãi 20% cho khách hàng mới",
+    "title": "Đánh thức vẻ đẹp tự nhiên của bạn.",
+    "description": "Nghệ thuật phun xăm phong thủy và nối mi thiết kế tinh tế. Mang lại diện mạo rạng rỡ, tự tin không cần trang điểm mỗi ngày."
+  },
+  "services": [
+    {
+      "title": "Phun xăm tự nhiên",
+      "description": "Kỹ thuật hiện đại tạo hạt vi chạm, điêu khắc sợi siêu thực. Mực organic nhập khẩu, giữ màu trong trẻo và hạn chế trổ xanh đỏ theo thời gian.",
+      "icon": "ph-pen-nib"
+    },
+    {
+      "title": "Nối mi thiết kế",
+      "description": "Đa dạng phong cách: Classic tự nhiên, Volume quyến rũ, Katun cá tính. Thiết kế dáng mi phù hợp với từng dáng mắt.",
+      "icon": "ph-eye"
+    },
+    {
+      "title": "Mực organic",
+      "description": "Chiết xuất từ thiên nhiên, an toàn cho da nhạy cảm. Màu sắc tươi tắn, bền đẹp từ 2-3 năm.",
+      "icon": "ph-plant"
+    }
+  ],
+  "gallerySections": [
+    {
+      "id": "lips",
+      "label": "Ảnh làm môi",
+      "description": "Màu môi sau bong, dáng môi và feedback khách hàng sau khi phun môi.",
+      "images": [
+        {
+          "title": "Phun môi Nano",
+          "url": "https://i.ibb.co/nMjPDPFj/666469468-3099752526884433-3488216475981925523-n.jpg"
+        },
+        {
+          "title": "Feedback môi",
+          "url": "https://i.ibb.co/q3PS0Zmn/z7779108936970-2f8d04bcd0d55ed34d854be1acb36f52.jpg"
+        },
+        {
+          "title": "Tin nhắn khách hàng",
+          "url": "https://i.ibb.co/gBbrdfS/z7779108942743-95a4129a1d40a4e467be99779ee16002.jpg"
+        },
+        {
+          "title": "Màu môi tự nhiên",
+          "url": "https://i.ibb.co/PZRg23Xy/z7779108946636-4df61a5913e2b3caca6032dc225cb09a.jpg"
+        }
+      ]
+    },
+    {
+      "id": "lashes",
+      "label": "Ảnh làm mi",
+      "description": "Bộ sưu tập nối mi, uốn mi và các dáng mi thiết kế cho từng dáng mắt.",
+      "images": [
+        {
+          "title": "Nối mi thiết kế",
+          "url": "https://i.ibb.co/bRXx2RYC/z7779183453115-5dd7732ca96f7672e4c46da52862489b.jpg"
+        },
+        {
+          "title": "Mi cong tự nhiên",
+          "url": "https://i.ibb.co/N61GSx1M/z7779183459823-c4376e7e1338a12648878a0de447d9a4.jpg"
+        },
+        {
+          "title": "Dáng mi nhẹ mắt",
+          "url": "https://i.ibb.co/Dg9pJxGZ/z7779183467001-85a3c8355dae5c03123515eeb417eefc.jpg"
+        },
+        {
+          "title": "Volume mềm",
+          "url": "https://i.ibb.co/rG2cpqq4/z7779183481247-738a89327d15a80842bfbabd44cb21db.jpg"
+        },
+        {
+          "title": "Mi thiết kế",
+          "url": "https://i.ibb.co/jv3K71QW/z7779183487808-ae1190a5d7b70415228f3cfcc954ef65.jpg"
+        }
+      ]
+    },
+    {
+      "id": "brows",
+      "label": "Ảnh làm mày",
+      "description": "Điêu khắc Hairstroke, shading, xử lý mày cũ và kết quả trước sau.",
+      "images": [
+        {
+          "title": "Trước khi làm mày",
+          "url": "https://i.ibb.co/WwJnKpw/z7779157856570-c416fcf2a73ba9f74dc4e7daf8e6a461.jpg"
+        },
+        {
+          "title": "Sau khi làm mày",
+          "url": "https://i.ibb.co/5xst28zD/z7779157849251-30681f8e58ac95771d2472f22e029c73.jpg"
+        },
+        {
+          "title": "Chứng nhận chuyên môn",
+          "url": "https://i.ibb.co/5XBtL82C/487495267-2731096240416732-5354937048691445811-n.jpg"
+        },
+        {
+          "title": "Thành tích phun xăm",
+          "url": "https://i.ibb.co/fV2HyfRc/487326413-2731096443750045-6403955405240353925-n.jpg"
+        }
+      ]
+    }
+  ],
+  "pricing": [
+    {
+      "name": "Uốn & Nối Mi",
+      "price": "149k - 249k",
+      "description": "Thiết kế dáng mi / Uốn mi phủ Collagen",
+      "featured": false
+    },
+    {
+      "name": "Combo Mày + Môi",
+      "price": "3.500k",
+      "description": "Điêu khắc Hairstroke & Phun môi Nano",
+      "featured": true
+    },
+    {
+      "name": "Xóa Sửa Mày Cũ",
+      "price": "Từ 500k",
+      "description": "Xử lý trổ xanh, đỏ, hút dung dịch",
+      "featured": false
+    }
+  ],
+  "booking": {
+    "title": "Giữ chỗ ngay hôm nay để nhận ưu đãi 20%",
+    "description": "Gửi thông tin đặt lịch, Phương Beauty sẽ liên hệ xác nhận trong thời gian sớm nhất.",
+    "services": [
+      "Tư vấn phun xăm",
+      "Phun môi Nano",
+      "Điêu khắc Hairstroke",
+      "Uốn mi",
+      "Nối mi thiết kế",
+      "Xóa sửa mày cũ"
+    ]
+  }
+}
