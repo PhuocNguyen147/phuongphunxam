@@ -26,17 +26,17 @@ export default function Footer({ setPage, content }) {
           <h4>Dịch vụ</h4>
           <ul>
             {services.slice(0, 5).map((service) => (
-              <li key={service}><a onClick={() => setPage('home')}>{service}</a></li>
+              <li key={service}><button className="text-nav-button footer-link-button" type="button" onClick={() => setPage('home')}>{service}</button></li>
             ))}
           </ul>
         </div>
         <div className="footer-col">
           <h4>Hỗ trợ</h4>
           <ul>
-            <li><a onClick={() => setPage('aftercare')}>Hướng dẫn chăm sóc</a></li>
+            <li><button className="text-nav-button footer-link-button" type="button" onClick={() => setPage('aftercare')}>Hướng dẫn chăm sóc</button></li>
             <li><a href="#">Chính sách bảo hành</a></li>
             <li><a href="#">Câu hỏi thường gặp</a></li>
-            <li><a onClick={() => setPage('home')}>Bảng giá chi tiết</a></li>
+            <li><button className="text-nav-button footer-link-button" type="button" onClick={() => setPage('home')}>Bảng giá chi tiết</button></li>
           </ul>
         </div>
         <div className="footer-col">

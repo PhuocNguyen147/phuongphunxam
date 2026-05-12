@@ -38,6 +38,7 @@ Vao `/admin`, dang nhap, sau do:
 
 - Tab `Noi dung`: sua ten thuong hieu, hotline, Facebook, hero, dich vu va bang gia.
 - Tab `Hinh anh`: quan ly rieng 3 khu anh `Anh lam moi`, `Anh lam mi`, `Anh lam may`.
+- Tab `Cham soc`: sua trang huong dan cham soc, tung nhom huong dan, tung the noi dung va tung gach dau dong.
 - Tab `Lich hen`: xem lich hen khach gui tu form website va cap nhat trang thai.
 
 Sau khi sua noi dung hoac them anh, bam `Luu thay doi`.
@@ -124,7 +125,51 @@ Neu ca hai lenh pass thi code san sang deploy.
 - Khong dung `admin123` cho website that.
 - File JSON phu hop giai doan dau; neu co booking that, nen dung database ben ngoai de khong mat du lieu.
 
-## 9. Tai lieu tham khao
+## 9. Doi mat khau admin sau khi deploy Render
+
+Mat khau admin khong nam trong code. Mat khau duoc doc tu bien moi truong `ADMIN_PASSWORD` tren Render.
+
+De doi mat khau:
+
+1. Vao Render Dashboard.
+2. Chon web service cua ban.
+3. Vao tab `Environment`.
+4. Tim `ADMIN_PASSWORD`.
+5. Doi value thanh mat khau moi.
+6. Bam `Save Changes`.
+7. Render se redeploy hoac restart service.
+
+Neu muon tat ca phien dang nhap cu bi mat hieu luc ngay, doi them `ADMIN_TOKEN_SECRET` sang mot chuoi moi, dai va kho doan. Neu chi doi `ADMIN_PASSWORD`, nhung ai da dang nhap truoc do co the con token cu toi da 12 gio.
+
+## 10. Deploy ban update len Render sau khi push GitHub
+
+Neu Render dang bat auto deploy:
+
+1. Sua code tren may.
+2. Commit code.
+3. Push len dung branch ma Render dang deploy, vi du `codex/admin-gallery-booking`.
+4. Render se tu build va deploy lai.
+
+Lenh thuong dung:
+
+```bash
+npm run lint
+npm run build
+git add .
+git commit -m "cap nhat website"
+git push
+```
+
+Neu Render khong tu deploy:
+
+1. Vao Render Dashboard.
+2. Chon web service.
+3. Bam `Manual Deploy`.
+4. Chon `Deploy latest commit`.
+
+Neu sau nay ban merge code vao `main`, vao Settings cua service tren Render va doi Branch tu `codex/admin-gallery-booking` sang `main`, hoac tao service moi deploy tu `main`.
+
+## 11. Tai lieu tham khao
 
 - Render Free: https://render.com/docs/free
 - Koyeb Node/Express deploy: https://www.koyeb.com/docs/deploy/express

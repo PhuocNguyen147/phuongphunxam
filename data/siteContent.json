@@ -127,6 +127,80 @@
       "featured": false
     }
   ],
+  "aftercare": {
+    "badge": "Cẩm nang hậu phẫu",
+    "title": "Hướng dẫn chăm sóc đúng cách",
+    "description": "Để có một kết quả hoàn mỹ, 50% phụ thuộc vào tay nghề chuyên gia, 50% còn lại phụ thuộc vào cách bạn chăm sóc tại nhà. Hãy làm theo các bước dưới đây nhé!",
+    "sections": [
+      {
+        "id": "brows",
+        "title": "Chăm sóc chân mày",
+        "icon": "ph-pen-nib",
+        "cards": [
+          {
+            "title": "Quy trình hồi phục & bong vảy",
+            "icon": "ph-sparkle",
+            "tone": "default",
+            "description": "Tuyệt đối để vảy bong tự nhiên, không dùng tay cạy hay bóc vảy để tránh làm mất màu sợi hoặc gây sẹo.",
+            "items": [
+              "Ngày 1 - Ngày 3: Mày có màu đậm, sắc nét hơn bình thường. Vùng da có thể hơi căng nhẹ. Dùng bông tẩy trang ẩm thấm nhẹ nước mô nếu có.",
+              "Ngày 4 - Ngày 7: Mày bắt đầu bong vảy mỏng. Bôi lớp dưỡng mỏng theo chỉ định để làm mềm vảy.",
+              "Sau 1 tháng: Màu mày ổn định và tệp vào da tự nhiên. Nếu có chỗ nhạt màu, bạn có thể quay lại dặm miễn phí."
+            ]
+          },
+          {
+            "title": "Những điều cần tránh",
+            "icon": "ph-warning-circle",
+            "tone": "warning",
+            "description": "",
+            "items": [
+              "Kiêng nước: Tránh để nước sinh hoạt dính trực tiếp vào vùng mày trong 3-5 ngày đầu.",
+              "Không cạy bóc: Để vảy bong tự nhiên, không dùng tay cạy hoặc gãi ngứa.",
+              "Tránh mỹ phẩm: Không trang điểm, không kẻ chân mày đè lên khi chưa bong hết.",
+              "Kiêng ăn uống: Tránh đồ nếp, thịt bò, gà, hải sản, rau muống trong 2 tuần.",
+              "Sinh hoạt: Hạn chế nằm sấp khi ngủ, tránh nắng gắt, đi bơi và xông hơi."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lips",
+        "title": "Chăm sóc môi Nano",
+        "icon": "ph-lips",
+        "cards": [
+          {
+            "title": "Vệ sinh & dưỡng nên làm",
+            "icon": "ph-drop",
+            "tone": "primary",
+            "description": "Bí quyết để môi nhanh liền, lên màu chuẩn, mướt mát và căng mọng.",
+            "items": [
+              "Vệ sinh sau ăn: Dùng tăm bông thấm nước muối sinh lý lau nhẹ nhàng sạch đồ ăn thừa, sau đó thấm khô.",
+              "Dưỡng ẩm liên tục: Sau 24h, bắt đầu bôi tuýp dưỡng chuyên dụng để môi luôn mềm.",
+              "Dinh dưỡng: Uống nhiều nước bằng ống hút, tăng cường dứa, cam, chanh, cà chua, sữa chua để màu lên tươi hơn."
+            ]
+          },
+          {
+            "title": "Những điều cần tránh",
+            "icon": "ph-warning-octagon",
+            "tone": "warning",
+            "description": "Những lưu ý vàng giúp môi không sưng, không loang lổ và lên màu trong trẻo.",
+            "items": [
+              "Đồ ăn gây sẹo/sưng: Kiêng thịt bò, gà, hải sản, đồ nếp, rau muống ít nhất 2 tuần.",
+              "Đồ uống đậm màu và chất kích thích: Tránh nước tương, cà phê, trà đặc, rượu bia và đồ cay nóng.",
+              "Kiêng cọ xát & nước: Dùng ống hút khi uống nước, không liếm môi, cắn môi hoặc tự bóc mài.",
+              "Kiêng đánh răng: Tránh dùng kem đánh răng trong 3-5 ngày đầu, thay bằng súc miệng nước muối sinh lý."
+            ]
+          }
+        ]
+      }
+    ],
+    "cta": {
+      "title": "Bạn có thắc mắc trong quá trình chăm sóc?",
+      "description": "Đừng ngần ngại liên hệ ngay với chúng tôi. Chuyên gia Phương luôn sẵn sàng hỗ trợ và giải đáp mọi lo lắng của bạn.",
+      "primaryText": "Gọi Hotline 093.973.2506",
+      "secondaryText": "Chat Messenger"
+    }
+  },
   "booking": {
     "title": "Giữ chỗ ngay hôm nay để nhận ưu đãi 20%",
     "description": "Gửi thông tin đặt lịch, Phương Beauty sẽ liên hệ xác nhận trong thời gian sớm nhất.",

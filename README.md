@@ -1,6 +1,7 @@
 # Phuong Beauty
 
 Website React + Vite co backend Node nho de quan ly noi dung, hinh anh va lich hen.
+Trang admin cung co the sua trang huong dan cham soc.
 
 ## Chay tren may
 

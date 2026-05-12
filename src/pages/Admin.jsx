@@ -4,11 +4,25 @@ import { api, resolveMediaUrl } from '../api';
 const emptyService = { title: '', description: '', icon: 'ph-sparkle' };
 const emptyImage = { title: '', url: '' };
 const emptyPrice = { name: '', price: '', description: '', featured: false };
+const emptyCareSection = { id: 'section', title: 'Nhóm chăm sóc mới', icon: 'ph-sparkle', cards: [] };
+const emptyCareCard = { title: 'Hướng dẫn mới', icon: 'ph-check-circle', tone: 'default', description: '', items: [''] };
 const defaultGallerySections = [
   { id: 'lips', label: 'Ảnh làm môi', description: '', images: [] },
   { id: 'lashes', label: 'Ảnh làm mi', description: '', images: [] },
   { id: 'brows', label: 'Ảnh làm mày', description: '', images: [] },
 ];
+const defaultAftercare = {
+  badge: 'Cẩm nang hậu phẫu',
+  title: 'Hướng dẫn chăm sóc đúng cách',
+  description: 'Các hướng dẫn chăm sóc sau khi làm dịch vụ.',
+  sections: [],
+  cta: {
+    title: 'Bạn có thắc mắc trong quá trình chăm sóc?',
+    description: 'Liên hệ Phuong Beauty để được hỗ trợ.',
+    primaryText: 'Gọi Hotline',
+    secondaryText: 'Chat Messenger',
+  },
+};
 
 function Field({ label, children }) {
   return (
@@ -21,12 +35,17 @@ function Field({ label, children }) {
 
 function normalizeDraft(content) {
   if (!content) return null;
-  if (Array.isArray(content.gallerySections)) return content;
+  const next = structuredClone(content);
 
-  return {
-    ...content,
-    gallerySections: defaultGallerySections.map((section) => ({ ...section, images: content.gallery || [] })),
-  };
+  if (!Array.isArray(next.gallerySections)) {
+    next.gallerySections = defaultGallerySections.map((section) => ({ ...section, images: content.gallery || [] }));
+  }
+
+  if (!next.aftercare) {
+    next.aftercare = structuredClone(defaultAftercare);
+  }
+
+  return next;
 }
 
 export default function Admin({ initialContent, setContent }) {
@@ -160,6 +179,78 @@ export default function Admin({ initialContent, setContent }) {
     });
   };
 
+  const addCareSection = () => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.aftercare.sections.push({ ...emptyCareSection, id: `care-${Date.now()}` });
+      return next;
+    });
+  };
+
+  const removeCareSection = (sectionIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.aftercare.sections = next.aftercare.sections.filter((_, index) => index !== sectionIndex);
+      return next;
+    });
+  };
+
+  const updateCareSection = (sectionIndex, field, value) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.aftercare.sections[sectionIndex][field] = value;
+      return next;
+    });
+  };
+
+  const addCareCard = (sectionIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.aftercare.sections[sectionIndex].cards.push(structuredClone(emptyCareCard));
+      return next;
+    });
+  };
+
+  const removeCareCard = (sectionIndex, cardIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.aftercare.sections[sectionIndex].cards = next.aftercare.sections[sectionIndex].cards.filter((_, index) => index !== cardIndex);
+      return next;
+    });
+  };
+
+  const updateCareCard = (sectionIndex, cardIndex, field, value) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.aftercare.sections[sectionIndex].cards[cardIndex][field] = value;
+      return next;
+    });
+  };
+
+  const addCareItem = (sectionIndex, cardIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.aftercare.sections[sectionIndex].cards[cardIndex].items.push('');
+      return next;
+    });
+  };
+
+  const removeCareItem = (sectionIndex, cardIndex, itemIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.aftercare.sections[sectionIndex].cards[cardIndex].items = next.aftercare.sections[sectionIndex].cards[cardIndex].items.filter((_, index) => index !== itemIndex);
+      return next;
+    });
+  };
+
+  const updateCareItem = (sectionIndex, cardIndex, itemIndex, value) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.aftercare.sections[sectionIndex].cards[cardIndex].items[itemIndex] = value;
+      return next;
+    });
+  };
+
   const uploadImage = async (file, sectionIndex, imageIndex) => {
     if (!file) return;
     const reader = new FileReader();
@@ -238,6 +329,7 @@ export default function Admin({ initialContent, setContent }) {
       <div className="admin-tabs">
         <button className={activeTab === 'content' ? 'active' : ''} onClick={() => setActiveTab('content')}>Nội dung</button>
         <button className={activeTab === 'images' ? 'active' : ''} onClick={() => setActiveTab('images')}>Hình ảnh</button>
+        <button className={activeTab === 'aftercare' ? 'active' : ''} onClick={() => setActiveTab('aftercare')}>Chăm sóc</button>
         <button className={activeTab === 'bookings' ? 'active' : ''} onClick={() => setActiveTab('bookings')}>Lịch hẹn</button>
       </div>
 
@@ -358,6 +450,104 @@ export default function Admin({ initialContent, setContent }) {
               </div>
             </div>
           ))}
+        </section>
+      )}
+
+      {activeTab === 'aftercare' && (
+        <section className="admin-image-sections">
+          <div className="admin-panel">
+            <h2>Trang hướng dẫn chăm sóc</h2>
+            <div className="admin-section-meta">
+              <Field label="Nhãn nhỏ">
+                <input value={draft.aftercare.badge} onChange={(event) => updatePath(['aftercare', 'badge'], event.target.value)} />
+              </Field>
+              <Field label="Tiêu đề chính">
+                <input value={draft.aftercare.title} onChange={(event) => updatePath(['aftercare', 'title'], event.target.value)} />
+              </Field>
+            </div>
+            <Field label="Mô tả đầu trang">
+              <textarea value={draft.aftercare.description} onChange={(event) => updatePath(['aftercare', 'description'], event.target.value)} rows="3" />
+            </Field>
+          </div>
+
+          <div className="admin-panel">
+            <div className="admin-panel-heading">
+              <h2>Các nhóm hướng dẫn</h2>
+              <button className="btn btn-ghost" type="button" onClick={addCareSection}>Thêm nhóm</button>
+            </div>
+
+            {draft.aftercare.sections.map((section, sectionIndex) => (
+              <div className="admin-care-section" key={`${section.id}-${sectionIndex}`}>
+                <div className="admin-section-meta">
+                  <Field label="Tên nhóm">
+                    <input value={section.title} onChange={(event) => updateCareSection(sectionIndex, 'title', event.target.value)} />
+                  </Field>
+                  <Field label="Icon Phosphor">
+                    <input value={section.icon} onChange={(event) => updateCareSection(sectionIndex, 'icon', event.target.value)} />
+                  </Field>
+                </div>
+                <div className="admin-panel-heading">
+                  <h3>{section.title || 'Nhóm chưa đặt tên'}</h3>
+                  <div className="admin-mini-actions">
+                    <button className="btn btn-ghost" type="button" onClick={() => addCareCard(sectionIndex)}>Thêm thẻ</button>
+                    <button className="text-button" type="button" onClick={() => removeCareSection(sectionIndex)}>Xóa nhóm</button>
+                  </div>
+                </div>
+
+                {(section.cards || []).map((card, cardIndex) => (
+                  <div className="admin-repeat care-repeat" key={`${card.title}-${cardIndex}`}>
+                    <Field label="Tiêu đề thẻ">
+                      <input value={card.title} onChange={(event) => updateCareCard(sectionIndex, cardIndex, 'title', event.target.value)} />
+                    </Field>
+                    <Field label="Icon">
+                      <input value={card.icon} onChange={(event) => updateCareCard(sectionIndex, cardIndex, 'icon', event.target.value)} />
+                    </Field>
+                    <Field label="Kiểu hiển thị">
+                      <select value={card.tone} onChange={(event) => updateCareCard(sectionIndex, cardIndex, 'tone', event.target.value)}>
+                        <option value="default">Từng bước</option>
+                        <option value="primary">Nên làm</option>
+                        <option value="warning">Cần tránh</option>
+                      </select>
+                    </Field>
+                    <Field label="Mô tả thẻ">
+                      <textarea value={card.description} onChange={(event) => updateCareCard(sectionIndex, cardIndex, 'description', event.target.value)} rows="2" />
+                    </Field>
+                    <div className="admin-care-items">
+                      <div className="admin-panel-heading">
+                        <h4>Gạch đầu dòng</h4>
+                        <button className="text-button" type="button" onClick={() => addCareItem(sectionIndex, cardIndex)}>Thêm dòng</button>
+                      </div>
+                      {(card.items || []).map((item, itemIndex) => (
+                        <div className="admin-care-item" key={`${itemIndex}-${item.slice(0, 12)}`}>
+                          <textarea value={item} onChange={(event) => updateCareItem(sectionIndex, cardIndex, itemIndex, event.target.value)} rows="2" />
+                          <button className="text-button" type="button" onClick={() => removeCareItem(sectionIndex, cardIndex, itemIndex)}>Xóa</button>
+                        </div>
+                      ))}
+                    </div>
+                    <button className="text-button" type="button" onClick={() => removeCareCard(sectionIndex, cardIndex)}>Xóa thẻ</button>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="admin-panel">
+            <h2>Khối hỗ trợ cuối trang</h2>
+            <div className="admin-section-meta">
+              <Field label="Tiêu đề">
+                <input value={draft.aftercare.cta.title} onChange={(event) => updatePath(['aftercare', 'cta', 'title'], event.target.value)} />
+              </Field>
+              <Field label="Nút gọi điện">
+                <input value={draft.aftercare.cta.primaryText} onChange={(event) => updatePath(['aftercare', 'cta', 'primaryText'], event.target.value)} />
+              </Field>
+            </div>
+            <Field label="Mô tả">
+              <textarea value={draft.aftercare.cta.description} onChange={(event) => updatePath(['aftercare', 'cta', 'description'], event.target.value)} rows="3" />
+            </Field>
+            <Field label="Nút Messenger">
+              <input value={draft.aftercare.cta.secondaryText} onChange={(event) => updatePath(['aftercare', 'cta', 'secondaryText'], event.target.value)} />
+            </Field>
+          </div>
         </section>
       )}
 

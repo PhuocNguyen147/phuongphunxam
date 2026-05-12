@@ -22,7 +22,7 @@ export default function Header({ page, setPage, content }) {
             <li><a href="#services" onClick={() => setIsMobileMenuOpen(false)}>Dịch vụ</a></li>
             <li><a href="#gallery" onClick={() => setIsMobileMenuOpen(false)}>Khách hàng</a></li>
             <li><a href="#pricing" onClick={() => setIsMobileMenuOpen(false)}>Bảng giá</a></li>
-            <li><a onClick={() => handleLinkClick('aftercare')}>Hướng dẫn chăm sóc</a></li>
+            <li><button className="text-nav-button" type="button" onClick={() => handleLinkClick('aftercare')}>Hướng dẫn chăm sóc</button></li>
           </ul>
         ) : (
           <a onClick={() => handleLinkClick('home')} className="btn btn-ghost" style={{ padding: '10px 20px', fontSize: 'var(--fs-small)' }}>

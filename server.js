@@ -36,10 +36,10 @@ const mimeTypes = {
 };
 
 function normalizeContent(content) {
+  const nextContent = { ...content };
+
   if (!content.gallerySections && Array.isArray(content.gallery)) {
-    return {
-      ...content,
-      gallerySections: [
+    nextContent.gallerySections = [
         {
           id: 'lips',
           label: 'Làm môi',
@@ -58,11 +58,25 @@ function normalizeContent(content) {
           description: 'Điêu khắc Hairstroke, shading và xử lý mày cũ.',
           images: content.gallery.slice(0, 4),
         },
-      ],
+      ];
+  }
+
+  if (!nextContent.aftercare) {
+    nextContent.aftercare = {
+      badge: 'Cẩm nang hậu phẫu',
+      title: 'Hướng dẫn chăm sóc đúng cách',
+      description: 'Các hướng dẫn chăm sóc sau khi làm dịch vụ.',
+      sections: [],
+      cta: {
+        title: 'Bạn có thắc mắc trong quá trình chăm sóc?',
+        description: 'Liên hệ với Phuong Beauty để được hỗ trợ.',
+        primaryText: 'Gọi Hotline',
+        secondaryText: 'Chat Messenger',
+      },
     };
   }
 
-  return content;
+  return nextContent;
 }
 
 async function ensureStorage() {

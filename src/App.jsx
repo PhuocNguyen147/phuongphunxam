@@ -34,7 +34,7 @@ export default function App() {
       ) : page === 'home' ? (
         <Home content={content} openLightbox={setLightboxImg} />
       ) : (
-        <Aftercare />
+        <Aftercare content={content} />
       )}
 
       {page !== 'admin' && <Footer setPage={setPage} content={content} />}
