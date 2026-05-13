@@ -4,6 +4,9 @@ import { api, resolveMediaUrl } from '../api';
 const emptyService = { title: '', description: '', icon: 'ph-sparkle' };
 const emptyImage = { title: '', url: '' };
 const emptyPrice = { name: '', price: '', description: '', featured: false };
+const emptyShowcaseCard = { title: '', description: '', icon: 'ph-sparkle', tone: 'default' };
+const emptyShowcaseStat = { value: '', label: '' };
+const emptyShowcaseSection = { id: 'showcase', title: 'Khu nội dung mới', description: '', layout: 'grid', images: [] };
 const emptyCareSection = { id: 'section', title: 'Nhóm chăm sóc mới', icon: 'ph-sparkle', cards: [] };
 const emptyCareCard = { title: 'Hướng dẫn mới', icon: 'ph-check-circle', tone: 'default', description: '', items: [''] };
 const defaultGallerySections = [
@@ -22,6 +25,17 @@ const defaultAftercare = {
     primaryText: 'Gọi Hotline',
     secondaryText: 'Chat Messenger',
   },
+};
+const defaultServiceShowcase = {
+  title: 'Nghệ thuật Phun Xăm Tự Nhiên',
+  description: '',
+  beforeLabel: 'Trước',
+  afterLabel: 'Sau',
+  beforeImage: { title: '', url: '' },
+  afterImage: { title: '', url: '' },
+  cards: [],
+  stats: [],
+  quote: { text: '', author: '', role: '', avatar: '' },
 };
 const bookingTabs = [
   { id: 'new', label: 'Khách mới' },
@@ -51,6 +65,24 @@ function normalizeDraft(content) {
   if (!next.aftercare) {
     next.aftercare = structuredClone(defaultAftercare);
   }
+
+  if (!next.serviceShowcase) {
+    next.serviceShowcase = structuredClone(defaultServiceShowcase);
+  }
+  next.serviceShowcase.beforeImage = next.serviceShowcase.beforeImage || { title: '', url: '' };
+  next.serviceShowcase.afterImage = next.serviceShowcase.afterImage || { title: '', url: '' };
+  next.serviceShowcase.quote = next.serviceShowcase.quote || { text: '', author: '', role: '', avatar: '' };
+  next.serviceShowcase.cards = Array.isArray(next.serviceShowcase.cards) ? next.serviceShowcase.cards : [];
+  next.serviceShowcase.stats = Array.isArray(next.serviceShowcase.stats) ? next.serviceShowcase.stats : [];
+
+  if (!Array.isArray(next.showcaseSections)) {
+    next.showcaseSections = [];
+  }
+  next.showcaseSections = next.showcaseSections.map((section) => ({
+    ...emptyShowcaseSection,
+    ...section,
+    images: Array.isArray(section.images) ? section.images : [],
+  }));
 
   return next;
 }
@@ -187,6 +219,105 @@ export default function Admin({ initialContent, setContent }) {
     });
   };
 
+  const addServiceShowcaseCard = () => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.serviceShowcase.cards.push(structuredClone(emptyShowcaseCard));
+      return next;
+    });
+  };
+
+  const updateServiceShowcaseCard = (cardIndex, field, value) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.serviceShowcase.cards[cardIndex][field] = value;
+      return next;
+    });
+  };
+
+  const removeServiceShowcaseCard = (cardIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.serviceShowcase.cards = next.serviceShowcase.cards.filter((_, index) => index !== cardIndex);
+      return next;
+    });
+  };
+
+  const addServiceShowcaseStat = () => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.serviceShowcase.stats.push(structuredClone(emptyShowcaseStat));
+      return next;
+    });
+  };
+
+  const updateServiceShowcaseStat = (statIndex, field, value) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.serviceShowcase.stats[statIndex][field] = value;
+      return next;
+    });
+  };
+
+  const removeServiceShowcaseStat = (statIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.serviceShowcase.stats = next.serviceShowcase.stats.filter((_, index) => index !== statIndex);
+      return next;
+    });
+  };
+
+  const addShowcaseSection = () => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.showcaseSections.push({
+        ...structuredClone(emptyShowcaseSection),
+        id: `showcase-${Date.now()}`,
+      });
+      return next;
+    });
+  };
+
+  const updateShowcaseSection = (sectionIndex, field, value) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.showcaseSections[sectionIndex][field] = value;
+      return next;
+    });
+  };
+
+  const removeShowcaseSection = (sectionIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.showcaseSections = next.showcaseSections.filter((_, index) => index !== sectionIndex);
+      return next;
+    });
+  };
+
+  const addShowcaseImage = (sectionIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.showcaseSections[sectionIndex].images.push(structuredClone(emptyImage));
+      return next;
+    });
+  };
+
+  const updateShowcaseImage = (sectionIndex, imageIndex, field, value) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.showcaseSections[sectionIndex].images[imageIndex][field] = value;
+      return next;
+    });
+  };
+
+  const removeShowcaseImage = (sectionIndex, imageIndex) => {
+    setDraft((current) => {
+      const next = structuredClone(current);
+      next.showcaseSections[sectionIndex].images = next.showcaseSections[sectionIndex].images.filter((_, index) => index !== imageIndex);
+      return next;
+    });
+  };
+
   const addCareSection = () => {
     setDraft((current) => {
       const next = structuredClone(current);
@@ -259,20 +390,24 @@ export default function Admin({ initialContent, setContent }) {
     });
   };
 
-  const uploadImage = async (file, sectionIndex, imageIndex) => {
+  const uploadImageToPath = async (file, path) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = async () => {
       try {
         setStatus('Đang tải ảnh lên...');
         const uploaded = await api.uploadImage({ name: file.name, dataUrl: reader.result });
-        updateGalleryImage(sectionIndex, imageIndex, 'url', uploaded.url);
+        updatePath(path, uploaded.url);
         setStatus('Ảnh đã tải lên, bấm Lưu thay đổi để cập nhật website.');
       } catch (error) {
         handleAuthError(error);
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const uploadImage = async (file, sectionIndex, imageIndex) => {
+    await uploadImageToPath(file, ['gallerySections', sectionIndex, 'images', imageIndex, 'url']);
   };
 
   const saveContent = async () => {
@@ -399,6 +534,110 @@ export default function Admin({ initialContent, setContent }) {
 
           <div className="admin-panel wide">
             <div className="admin-panel-heading">
+              <h2>Khối dịch vụ nổi bật</h2>
+              <div className="admin-mini-actions">
+                <button className="btn btn-ghost" type="button" onClick={addServiceShowcaseCard}>Thêm thẻ</button>
+                <button className="btn btn-ghost" type="button" onClick={addServiceShowcaseStat}>Thêm số liệu</button>
+              </div>
+            </div>
+            <div className="admin-section-meta">
+              <Field label="Tiêu đề">
+                <input value={draft.serviceShowcase.title} onChange={(event) => updatePath(['serviceShowcase', 'title'], event.target.value)} />
+              </Field>
+              <Field label="Mô tả">
+                <textarea value={draft.serviceShowcase.description} onChange={(event) => updatePath(['serviceShowcase', 'description'], event.target.value)} rows="3" />
+              </Field>
+            </div>
+
+            <div className="admin-image-grid compact">
+              <div className="admin-image-card">
+                {draft.serviceShowcase.beforeImage.url && <img src={resolveMediaUrl(draft.serviceShowcase.beforeImage.url)} alt={draft.serviceShowcase.beforeImage.title} />}
+                <Field label="Nhãn ảnh trước">
+                  <input value={draft.serviceShowcase.beforeLabel} onChange={(event) => updatePath(['serviceShowcase', 'beforeLabel'], event.target.value)} />
+                </Field>
+                <Field label="Tên ảnh trước">
+                  <input value={draft.serviceShowcase.beforeImage.title} onChange={(event) => updatePath(['serviceShowcase', 'beforeImage', 'title'], event.target.value)} />
+                </Field>
+                <Field label="URL ảnh trước">
+                  <input value={draft.serviceShowcase.beforeImage.url} onChange={(event) => updatePath(['serviceShowcase', 'beforeImage', 'url'], event.target.value)} />
+                </Field>
+                <input type="file" accept="image/*" onChange={(event) => uploadImageToPath(event.target.files?.[0], ['serviceShowcase', 'beforeImage', 'url'])} />
+              </div>
+
+              <div className="admin-image-card">
+                {draft.serviceShowcase.afterImage.url && <img src={resolveMediaUrl(draft.serviceShowcase.afterImage.url)} alt={draft.serviceShowcase.afterImage.title} />}
+                <Field label="Nhãn ảnh sau">
+                  <input value={draft.serviceShowcase.afterLabel} onChange={(event) => updatePath(['serviceShowcase', 'afterLabel'], event.target.value)} />
+                </Field>
+                <Field label="Tên ảnh sau">
+                  <input value={draft.serviceShowcase.afterImage.title} onChange={(event) => updatePath(['serviceShowcase', 'afterImage', 'title'], event.target.value)} />
+                </Field>
+                <Field label="URL ảnh sau">
+                  <input value={draft.serviceShowcase.afterImage.url} onChange={(event) => updatePath(['serviceShowcase', 'afterImage', 'url'], event.target.value)} />
+                </Field>
+                <input type="file" accept="image/*" onChange={(event) => uploadImageToPath(event.target.files?.[0], ['serviceShowcase', 'afterImage', 'url'])} />
+              </div>
+            </div>
+
+            <div className="admin-subsection">
+              <h3>Thẻ nội dung bên phải</h3>
+              {draft.serviceShowcase.cards.map((card, index) => (
+                <div className="admin-repeat" key={`${card.title}-${index}`}>
+                  <Field label="Tiêu đề thẻ">
+                    <input value={card.title} onChange={(event) => updateServiceShowcaseCard(index, 'title', event.target.value)} />
+                  </Field>
+                  <Field label="Icon Phosphor">
+                    <input value={card.icon} onChange={(event) => updateServiceShowcaseCard(index, 'icon', event.target.value)} />
+                  </Field>
+                  <Field label="Màu thẻ">
+                    <select value={card.tone} onChange={(event) => updateServiceShowcaseCard(index, 'tone', event.target.value)}>
+                      <option value="default">Sáng</option>
+                      <option value="primary">Hồng nổi bật</option>
+                    </select>
+                  </Field>
+                  <Field label="Nội dung">
+                    <textarea value={card.description} onChange={(event) => updateServiceShowcaseCard(index, 'description', event.target.value)} rows="3" />
+                  </Field>
+                  <button className="text-button" type="button" onClick={() => removeServiceShowcaseCard(index)}>Xóa thẻ</button>
+                </div>
+              ))}
+            </div>
+
+            <div className="admin-subsection">
+              <h3>Số liệu và câu trích dẫn</h3>
+              {draft.serviceShowcase.stats.map((stat, index) => (
+                <div className="admin-repeat compact-repeat" key={`${stat.label}-${index}`}>
+                  <Field label="Số liệu">
+                    <input value={stat.value} onChange={(event) => updateServiceShowcaseStat(index, 'value', event.target.value)} />
+                  </Field>
+                  <Field label="Nhãn">
+                    <input value={stat.label} onChange={(event) => updateServiceShowcaseStat(index, 'label', event.target.value)} />
+                  </Field>
+                  <button className="text-button" type="button" onClick={() => removeServiceShowcaseStat(index)}>Xóa số liệu</button>
+                </div>
+              ))}
+              <div className="admin-section-meta">
+                <Field label="Câu trích dẫn">
+                  <textarea value={draft.serviceShowcase.quote.text} onChange={(event) => updatePath(['serviceShowcase', 'quote', 'text'], event.target.value)} rows="3" />
+                </Field>
+                <div>
+                  <Field label="Tên người nói">
+                    <input value={draft.serviceShowcase.quote.author} onChange={(event) => updatePath(['serviceShowcase', 'quote', 'author'], event.target.value)} />
+                  </Field>
+                  <Field label="Vai trò">
+                    <input value={draft.serviceShowcase.quote.role} onChange={(event) => updatePath(['serviceShowcase', 'quote', 'role'], event.target.value)} />
+                  </Field>
+                  <Field label="Ảnh đại diện">
+                    <input value={draft.serviceShowcase.quote.avatar} onChange={(event) => updatePath(['serviceShowcase', 'quote', 'avatar'], event.target.value)} />
+                  </Field>
+                  <input type="file" accept="image/*" onChange={(event) => uploadImageToPath(event.target.files?.[0], ['serviceShowcase', 'quote', 'avatar'])} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="admin-panel wide">
+            <div className="admin-panel-heading">
               <h2>Dịch vụ</h2>
               <button className="btn btn-ghost" type="button" onClick={() => addListItem('services', emptyService)}>Thêm dịch vụ</button>
             </div>
@@ -478,6 +717,62 @@ export default function Admin({ initialContent, setContent }) {
               </div>
             </div>
           ))}
+
+          <div className="admin-panel">
+            <div className="admin-panel-heading">
+              <div>
+                <h2>Các khu ảnh trên trang chủ</h2>
+                <p>Quản lý các khối như uy tín, phản hồi, bộ sưu tập mi.</p>
+              </div>
+              <button className="btn btn-ghost" type="button" onClick={addShowcaseSection}>Thêm khu ảnh</button>
+            </div>
+
+            {draft.showcaseSections.map((section, sectionIndex) => (
+              <div className="admin-care-section" key={`${section.id}-${sectionIndex}`}>
+                <div className="admin-panel-heading">
+                  <h3>{section.title || 'Khu ảnh chưa đặt tên'}</h3>
+                  <div className="admin-mini-actions">
+                    <button className="btn btn-ghost" type="button" onClick={() => addShowcaseImage(sectionIndex)}>Thêm ảnh</button>
+                    <button className="text-button" type="button" onClick={() => removeShowcaseSection(sectionIndex)}>Xóa khu</button>
+                  </div>
+                </div>
+
+                <div className="admin-section-meta">
+                  <Field label="Tiêu đề khu">
+                    <input value={section.title} onChange={(event) => updateShowcaseSection(sectionIndex, 'title', event.target.value)} />
+                  </Field>
+                  <Field label="Mô tả khu">
+                    <textarea value={section.description} onChange={(event) => updateShowcaseSection(sectionIndex, 'description', event.target.value)} rows="2" />
+                  </Field>
+                  <Field label="Mã khu">
+                    <input value={section.id} onChange={(event) => updateShowcaseSection(sectionIndex, 'id', event.target.value)} />
+                  </Field>
+                  <Field label="Kiểu hiển thị">
+                    <select value={section.layout} onChange={(event) => updateShowcaseSection(sectionIndex, 'layout', event.target.value)}>
+                      <option value="grid">Lưới ảnh</option>
+                      <option value="rail">Chạy ngang</option>
+                    </select>
+                  </Field>
+                </div>
+
+                <div className="admin-image-grid">
+                  {section.images.map((image, imageIndex) => (
+                    <div className="admin-image-card" key={`${image.url}-${imageIndex}`}>
+                      {image.url && <img src={resolveMediaUrl(image.url)} alt={image.title} />}
+                      <Field label="Tên ảnh">
+                        <input value={image.title} onChange={(event) => updateShowcaseImage(sectionIndex, imageIndex, 'title', event.target.value)} />
+                      </Field>
+                      <Field label="URL ảnh">
+                        <input value={image.url} onChange={(event) => updateShowcaseImage(sectionIndex, imageIndex, 'url', event.target.value)} />
+                      </Field>
+                      <input type="file" accept="image/*" onChange={(event) => uploadImageToPath(event.target.files?.[0], ['showcaseSections', sectionIndex, 'images', imageIndex, 'url'])} />
+                      <button className="text-button" type="button" onClick={() => removeShowcaseImage(sectionIndex, imageIndex)}>Xóa ảnh</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       )}
 

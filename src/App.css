@@ -381,12 +381,14 @@ header {
     overflow-x: auto;
     overflow-y: hidden;
     padding: 4px 0 12px;
-    touch-action: pan-y;
+    touch-action: pan-x pan-y;
     cursor: grab;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
     user-select: none;
     -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto;
+    will-change: scroll-position;
 }
 .gallery-rail::-webkit-scrollbar {
     display: none;
@@ -438,6 +440,102 @@ header {
     color: var(--text-dark);
     font: 600 var(--fs-small) var(--font-body);
     text-align: left;
+}
+
+/* Editable homepage showcase */
+.service-showcase-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap-bento);
+}
+.service-showcase-main {
+    gap: 22px;
+}
+.before-after-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 8px;
+}
+.before-after-card,
+.showcase-image-card {
+    display: block;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    background: var(--card-bg);
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    cursor: zoom-in;
+    box-shadow: var(--shadow-sm);
+}
+.before-after-card {
+    aspect-ratio: 1 / 1;
+}
+.before-after-card img,
+.showcase-image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+}
+.before-after-card:hover img,
+.showcase-image-card:hover img,
+.before-after-card:focus-visible img,
+.showcase-image-card:focus-visible img {
+    transform: scale(1.04);
+}
+.before-after-card span,
+.showcase-image-card span {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    z-index: 2;
+    max-width: calc(100% - 24px);
+    padding: 8px 12px;
+    border-radius: var(--radius-btn);
+    background: rgba(255,255,255,0.92);
+    color: var(--primary-dark);
+    font: 700 0.78rem var(--font-body);
+}
+.before-after-card span {
+    top: 12px;
+    bottom: auto;
+}
+.service-side-card {
+    justify-content: center;
+    min-height: 210px;
+}
+.service-stat-card {
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+}
+.service-stat-card h2 {
+    color: var(--primary);
+    font-size: clamp(2rem, 7vw, 3rem);
+}
+.service-quote-card {
+    justify-content: center;
+    min-height: 220px;
+}
+.service-quote-card h3 {
+    font-style: italic;
+}
+.service-quote-card .avatar {
+    object-fit: cover;
+}
+.homepage-showcase {
+    overflow: hidden;
+}
+.showcase-image-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+.showcase-image-card {
+    aspect-ratio: 4 / 3;
 }
 .booking-section {
     margin-top: 40px;
@@ -569,6 +667,15 @@ header {
     border-radius: var(--radius-inner);
     margin-top: 12px;
 }
+.admin-subsection {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-color);
+}
+.admin-subsection h3 {
+    font-size: var(--fs-body);
+    margin-bottom: 12px;
+}
 .admin-check {
     display: flex;
     align-items: center;
@@ -587,6 +694,9 @@ header {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
+}
+.admin-image-grid.compact {
+    margin-bottom: 8px;
 }
 .admin-image-sections {
     display: flex;
@@ -721,9 +831,12 @@ footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; mar
     .hero { padding-top: 96px; padding-bottom: 96px; }
     .footer-grid { grid-template-columns: repeat(2, 1fr); }
     .form-row { grid-template-columns: 1fr 1fr; }
+    .before-after-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .showcase-image-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .admin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .admin-panel.wide { grid-column: 1 / -1; }
     .admin-repeat { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .compact-repeat { grid-template-columns: 1fr 1fr auto; align-items: end; }
     .admin-section-meta { grid-template-columns: 320px 1fr; }
     .admin-image-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .booking-row { grid-template-columns: 1fr 240px; align-items: center; }
@@ -749,6 +862,11 @@ footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; mar
     .main-srv-4 { grid-column: span 3; }
     .main-srv-5 { grid-column: span 3; }
     .main-srv-6 { grid-column: span 6; }
+    .service-showcase-grid { grid-template-columns: repeat(12, 1fr); }
+    .service-showcase-main { grid-column: span 8; grid-row: span 2; }
+    .service-side-card { grid-column: span 4; }
+    .service-stat-card { grid-column: span 3; }
+    .service-quote-card { grid-column: span 6; }
     .gal-1 { grid-column: span 6; grid-row: span 2; }
     .gal-2, .gal-3, .gal-4, .gal-5 { grid-column: span 3; }
     .tech-card { grid-column: span 3; }
@@ -830,6 +948,24 @@ footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; mar
 
   .gallery-category-header {
     padding: 0 18px;
+  }
+
+  .gallery-track {
+    gap: 12px;
+  }
+
+  .gallery-slide {
+    flex-basis: min(78vw, 310px);
+    border-radius: 16px;
+  }
+
+  .service-showcase-grid,
+  .showcase-image-grid {
+    gap: 14px;
+  }
+
+  .showcase-image-card {
+    border-radius: 16px;
   }
 
   .admin-topbar {

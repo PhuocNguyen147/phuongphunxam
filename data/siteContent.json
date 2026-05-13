@@ -107,6 +107,116 @@
       ]
     }
   ],
+  "serviceShowcase": {
+    "title": "Nghệ thuật Phun Xăm Tự Nhiên",
+    "description": "Sử dụng kỹ thuật hiện đại tạo hạt vi chạm, điêu khắc sợi siêu thực. Cam kết mực Organic nhập khẩu, giữ màu trong trẻo và hạn chế trổ xanh đỏ theo thời gian.",
+    "beforeLabel": "Trước",
+    "afterLabel": "Sau",
+    "beforeImage": {
+      "title": "Trước khi làm",
+      "url": "https://i.ibb.co/WwJnKpw/z7779157856570-c416fcf2a73ba9f74dc4e7daf8e6a461.jpg"
+    },
+    "afterImage": {
+      "title": "Sau khi làm",
+      "url": "https://i.ibb.co/5xst28zD/z7779157849251-30681f8e58ac95771d2472f22e029c73.jpg"
+    },
+    "cards": [
+      {
+        "title": "Nối Mi Thiết Kế",
+        "description": "Đa dạng phong cách: Classic tự nhiên, Volume quyến rũ, Katun cá tính. Thiết kế dáng mi phù hợp với từng dáng mắt.",
+        "icon": "ph-eye",
+        "tone": "primary"
+      },
+      {
+        "title": "Mực 100% Organic",
+        "description": "Chiết xuất từ thiên nhiên, an toàn cho da nhạy cảm. Màu sắc tươi tắn, bền đẹp từ 2-3 năm.",
+        "icon": "ph-plant",
+        "tone": "default"
+      }
+    ],
+    "stats": [
+      {
+        "value": "5000+",
+        "label": "Khách hàng hài lòng"
+      },
+      {
+        "value": "100%",
+        "label": "Dụng cụ vô trùng"
+      }
+    ],
+    "quote": {
+      "text": "Làm đẹp không sưng, không đau, không cần nghỉ dưỡng. Thức dậy là đã xinh đẹp.",
+      "author": "Master Phương",
+      "role": "Founder & Chuyên gia",
+      "avatar": "https://i.ibb.co/2YLx2GSQ/671238164-122175271484674409-489046803376587283-n.jpg"
+    }
+  },
+  "showcaseSections": [
+    {
+      "id": "authority",
+      "title": "Khẳng định uy tín & chuyên môn",
+      "description": "Liên tục tu nghiệp chuyên sâu và đạt thành tích xuất sắc tại các cuộc thi sắc đẹp trong & ngoài nước.",
+      "layout": "grid",
+      "images": [
+        {
+          "title": "Thực hành chuyên môn",
+          "url": "https://i.ibb.co/5XBtL82C/487495267-2731096240416732-5354937048691445811-n.jpg"
+        },
+        {
+          "title": "Chứng nhận giải thưởng",
+          "url": "https://i.ibb.co/fV2HyfRc/487326413-2731096443750045-6403955405240353925-n.jpg"
+        },
+        {
+          "title": "Thành tích chuyên môn",
+          "url": "https://i.ibb.co/xKJnhCbv/486612555-2731096433750046-5300749428696946604-n.jpg"
+        }
+      ]
+    },
+    {
+      "id": "feedback",
+      "title": "Phản hồi chân thực",
+      "description": "Hàng ngàn tin nhắn yêu thương và sự hài lòng tuyệt đối từ khách hàng của Phương Beauty.",
+      "layout": "rail",
+      "images": [
+        {
+          "title": "Feedback khách hàng",
+          "url": "https://i.ibb.co/q3PS0Zmn/z7779108936970-2f8d04bcd0d55ed34d854be1acb36f52.jpg"
+        },
+        {
+          "title": "Khách hài lòng",
+          "url": "https://i.ibb.co/gBbrdfS/z7779108942743-95a4129a1d40a4e467be99779ee16002.jpg"
+        },
+        {
+          "title": "Màu môi sau bong",
+          "url": "https://i.ibb.co/PZRg23Xy/z7779108946636-4df61a5913e2b3caca6032dc225cb09a.jpg"
+        },
+        {
+          "title": "Tin nhắn phản hồi",
+          "url": "https://i.ibb.co/ksMS4CfT/z7779108950236-2b1cd67d837e65b3ac55adff8d66de50.jpg"
+        }
+      ]
+    },
+    {
+      "id": "lash-collection",
+      "title": "Bộ sưu tập Nối Mi Thiết Kế",
+      "description": "Những đôi mắt hút hồn với hàng mi cong vút, tự nhiên nhưng không kém phần quyến rũ tại Phương Beauty.",
+      "layout": "grid",
+      "images": [
+        {
+          "title": "Mi tự nhiên",
+          "url": "https://i.ibb.co/bRXx2RYC/z7779183453115-5dd7732ca96f7672e4c46da52862489b.jpg"
+        },
+        {
+          "title": "Mi thiết kế",
+          "url": "https://i.ibb.co/N61GSx1M/z7779183459823-c4376e7e1338a12648878a0de447d9a4.jpg"
+        },
+        {
+          "title": "Volume mềm",
+          "url": "https://i.ibb.co/rG2cpqq4/z7779183481247-738a89327d15a80842bfbabd44cb21db.jpg"
+        }
+      ]
+    }
+  ],
   "pricing": [
     {
       "name": "Uốn & Nối Mi",

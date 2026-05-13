@@ -36,8 +36,8 @@ Khi deploy, dat 2 bien moi truong nay tren dashboard cua nha cung cap hosting:
 
 Vao `/admin`, dang nhap, sau do:
 
-- Tab `Noi dung`: sua ten thuong hieu, hotline, Facebook, hero, dich vu va bang gia.
-- Tab `Hinh anh`: quan ly rieng 3 khu anh `Anh lam moi`, `Anh lam mi`, `Anh lam may`.
+- Tab `Noi dung`: sua ten thuong hieu, hotline, Facebook, hero, khoi dich vu noi bat, anh truoc/sau, the noi dung, so lieu, cau trich dan, dich vu va bang gia.
+- Tab `Hinh anh`: quan ly rieng 3 khu anh `Anh lam moi`, `Anh lam mi`, `Anh lam may`, va cac khu anh trang chu nhu `Uy tin`, `Phan hoi`, `Bo suu tap mi`.
 - Tab `Cham soc`: sua trang huong dan cham soc, tung nhom huong dan, tung the noi dung va tung gach dau dong.
 - Tab `Lich hen`: xem lich hen khach gui tu form website va cap nhat trang thai.
 
@@ -51,7 +51,7 @@ Thu vien anh duoc tach thanh 3 khu rieng:
 - Anh lam mi.
 - Anh lam may.
 
-Moi khu anh tu dong chay ngang nhe nhàng. Khi khach re chuot vao tren may tinh hoac cham tay vao carousel tren dien thoai, hieu ung se tam dung de khach xem anh ky hon.
+Moi khu anh tu dong chay ngang nhe nhang. Khi khach re chuot vao tren may tinh hoac cham tay vao carousel tren dien thoai, hieu ung se tam dung de khach xem anh ky hon. Khach co the keo chuot trai/phai tren may tinh hoac vuot tay qua lai tren dien thoai de xem anh muot hon.
 
 ## 5. Database cua website nam o dau?
 

@@ -14,6 +14,8 @@ const fallbackContent = {
   },
   services: [],
   gallerySections: [],
+  showcaseSections: [],
+  serviceShowcase: null,
   pricing: [],
   booking: {
     title: 'Giữ chỗ ngay hôm nay để nhận ưu đãi 20%',
@@ -37,7 +39,7 @@ function getGallerySections(site) {
   ];
 }
 
-function GalleryRail({ section, openLightbox }) {
+function GalleryRail({ section, openLightbox, showHeader = true }) {
   const images = section.images || [];
   const repeatedImages = images.length > 1 ? [...images, ...images] : images;
   const railRef = useRef(null);
@@ -97,6 +99,18 @@ function GalleryRail({ section, openLightbox }) {
     if (!rail) return;
 
     pause();
+    if (event.pointerType === 'touch') {
+      dragRef.current = {
+        ...dragRef.current,
+        dragged: false,
+        dragging: false,
+        pointerId: event.pointerId,
+        startScroll: rail.scrollLeft,
+        startX: event.clientX,
+      };
+      return;
+    }
+
     dragRef.current = {
       ...dragRef.current,
       dragged: false,
@@ -111,10 +125,11 @@ function GalleryRail({ section, openLightbox }) {
   const drag = (event) => {
     const rail = railRef.current;
     const state = dragRef.current;
-    if (!rail || !state.dragging || state.pointerId !== event.pointerId) return;
+    if (!rail || state.pointerId !== event.pointerId) return;
 
     const delta = event.clientX - state.startX;
     if (Math.abs(delta) > 4) state.dragged = true;
+    if (!state.dragging) return;
     rail.scrollLeft = state.startScroll - delta;
   };
 
@@ -136,13 +151,15 @@ function GalleryRail({ section, openLightbox }) {
 
   return (
     <section className="gallery-category" aria-label={section.label}>
-      <div className="gallery-category-header">
-        <div>
-          <span className="text-small">{section.id}</span>
-          <h3>{section.label}</h3>
+      {showHeader && (
+        <div className="gallery-category-header">
+          <div>
+            <span className="text-small">{section.id}</span>
+            <h3>{section.label}</h3>
+          </div>
+          <p>{section.description}</p>
         </div>
-        <p>{section.description}</p>
-      </div>
+      )}
 
       <div
         className="gallery-rail"
@@ -176,6 +193,96 @@ function GalleryRail({ section, openLightbox }) {
             );
           })}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function ServiceShowcase({ showcase, openLightbox }) {
+  if (!showcase) return null;
+
+  const beforeUrl = resolveMediaUrl(showcase.beforeImage?.url);
+  const afterUrl = resolveMediaUrl(showcase.afterImage?.url);
+
+  return (
+    <section id="services" className="container">
+      <div className="service-showcase-grid">
+        <div className="bento-card service-showcase-main">
+          <h2>{showcase.title}</h2>
+          <p>{showcase.description}</p>
+          <div className="before-after-grid">
+            {[{ label: showcase.beforeLabel, image: showcase.beforeImage, url: beforeUrl }, { label: showcase.afterLabel, image: showcase.afterImage, url: afterUrl }].map((item) => (
+              <button className="before-after-card" type="button" key={item.label} onClick={() => item.url && openLightbox(item.url)}>
+                <span>{item.label}</span>
+                {item.url && <img src={item.url} alt={item.image?.title || item.label} loading="lazy" />}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {(showcase.cards || []).map((card) => (
+          <div className={`bento-card service-side-card ${card.tone === 'primary' ? 'bg-primary' : ''}`} key={card.title}>
+            <i className={`ph-light ${card.icon || 'ph-sparkle'} card-icon`}></i>
+            <h3>{card.title}</h3>
+            <p>{card.description}</p>
+          </div>
+        ))}
+
+        {(showcase.stats || []).map((stat) => (
+          <div className="bento-card service-stat-card text-center" key={stat.label}>
+            <h2>{stat.value}</h2>
+            <p className="text-small">{stat.label}</p>
+          </div>
+        ))}
+
+        {showcase.quote?.text && (
+          <div className="bento-card service-quote-card bg-dark">
+            <h3>"{showcase.quote.text}"</h3>
+            <div className="avatar-group">
+              {showcase.quote.avatar && <img src={resolveMediaUrl(showcase.quote.avatar)} alt={showcase.quote.author} className="avatar" />}
+              <div>
+                <p style={{ margin: 0, color: 'var(--text-light)', fontWeight: 700 }}>{showcase.quote.author}</p>
+                <p className="text-small" style={{ margin: 0 }}>{showcase.quote.role}</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ShowcaseSection({ section, openLightbox }) {
+  if (!section?.images?.length) return null;
+
+  if (section.layout === 'rail') {
+    return (
+      <section className="homepage-showcase section-padding">
+        <div className="container section-header">
+          <h2>{section.title}</h2>
+          <p>{section.description}</p>
+        </div>
+        <GalleryRail section={{ ...section, label: section.title }} openLightbox={openLightbox} showHeader={false} />
+      </section>
+    );
+  }
+
+  return (
+    <section className="homepage-showcase container section-padding">
+      <div className="section-header">
+        <h2>{section.title}</h2>
+        <p>{section.description}</p>
+      </div>
+      <div className="showcase-image-grid">
+        {section.images.map((image, index) => {
+          const imageUrl = resolveMediaUrl(image.url);
+          return (
+            <button className="showcase-image-card" type="button" key={`${image.url}-${index}`} onClick={() => openLightbox(imageUrl)}>
+              <img src={imageUrl} alt={image.title || section.title} loading="lazy" />
+              {image.title && <span>{image.title}</span>}
+            </button>
+          );
+        })}
       </div>
     </section>
   );
@@ -241,29 +348,7 @@ export default function Home({ content, openLightbox }) {
         </div>
       </section>
 
-      <section id="services" className="container">
-        <div className="section-header">
-          <h2>Dịch vụ nổi bật</h2>
-          <p>Tất cả phần chữ và dịch vụ trong khu vực này có thể chỉnh trong trang admin.</p>
-        </div>
-        <div className="bento-grid">
-          {(site.services || []).map((service, index) => (
-            <div key={service.title} className={`bento-card ${index === 1 ? 'bg-primary' : ''} ${index === 0 ? 'main-srv-1' : 'main-srv-2'}`}>
-              <i className={`ph-light ${service.icon || 'ph-sparkle'} card-icon`}></i>
-              <h3>{service.title}</h3>
-              <p>{service.description}</p>
-            </div>
-          ))}
-          <div className="bento-card main-srv-4 text-center" style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '3rem', color: 'var(--primary)' }}>5000+</h2>
-            <p className="text-small">Khách hàng hài lòng</p>
-          </div>
-          <div className="bento-card main-srv-5 text-center" style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '3rem', color: 'var(--primary)' }}>100%</h2>
-            <p className="text-small">Dụng cụ vô trùng</p>
-          </div>
-        </div>
-      </section>
+      <ServiceShowcase showcase={site.serviceShowcase} openLightbox={openLightbox} />
 
       <section id="gallery" className="gallery-area section-padding">
         <div className="container section-header">
@@ -274,6 +359,10 @@ export default function Home({ content, openLightbox }) {
           <GalleryRail key={section.id} section={section} openLightbox={openLightbox} />
         ))}
       </section>
+
+      {(site.showcaseSections || []).map((section) => (
+        <ShowcaseSection section={section} openLightbox={openLightbox} key={section.id} />
+      ))}
 
       <section id="pricing" className="container section-padding">
         <div className="section-header">

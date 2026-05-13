@@ -76,6 +76,24 @@ function normalizeContent(content) {
     };
   }
 
+  if (!nextContent.serviceShowcase) {
+    nextContent.serviceShowcase = {
+      title: 'Nghệ thuật Phun Xăm Tự Nhiên',
+      description: '',
+      beforeLabel: 'Trước',
+      afterLabel: 'Sau',
+      beforeImage: { title: '', url: '' },
+      afterImage: { title: '', url: '' },
+      cards: [],
+      stats: [],
+      quote: { text: '', author: '', role: '', avatar: '' },
+    };
+  }
+
+  if (!Array.isArray(nextContent.showcaseSections)) {
+    nextContent.showcaseSections = [];
+  }
+
   return nextContent;
 }
 
