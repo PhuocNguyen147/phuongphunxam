@@ -208,6 +208,23 @@ p {
     background: linear-gradient(135deg, rgba(255,255,255,0.62), rgba(255,255,255,0.08) 42%, rgba(183,110,121,0.08));
     opacity: 0.72;
 }
+.bento-card::after,
+.admin-panel::after,
+.admin-login-card::after,
+.admin-image-card::after,
+.gallery-slide::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 10px;
+    height: 34%;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0.08) 68%, transparent);
+    opacity: 0.78;
+    mix-blend-mode: screen;
+}
 .bento-card > *,
 .admin-panel > *,
 .admin-login-card > *,
@@ -215,6 +232,11 @@ p {
 .gallery-slide > * {
     position: relative;
     z-index: 1;
+}
+.bento-card:hover::after,
+.admin-panel:hover::after,
+.gallery-slide:hover::after {
+    opacity: 0.95;
 }
 
 .bento-card.bg-primary { background: linear-gradient(145deg, rgba(183,110,121,0.94), rgba(154,91,100,0.86)); border-color: rgba(255,255,255,0.38); }
@@ -272,6 +294,8 @@ p {
     font-weight: 500;
     color: var(--primary-dark);
     box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(18px) saturate(1.18);
+    -webkit-backdrop-filter: blur(18px) saturate(1.18);
 }
 
 .dot-pulse {

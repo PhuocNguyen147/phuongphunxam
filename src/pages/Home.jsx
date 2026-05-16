@@ -41,7 +41,7 @@ function getGallerySections(site) {
 
 function GalleryRail({ section, openLightbox, showHeader = true }) {
   const images = section.images || [];
-  const repeatedImages = images.length > 1 ? [...images, ...images] : images;
+  const repeatedImages = images.length > 1 ? [...images, ...images, ...images] : images;
   const railRef = useRef(null);
   const dragRef = useRef({
     dragged: false,
@@ -62,21 +62,41 @@ function GalleryRail({ section, openLightbox, showHeader = true }) {
 
     let frame = 0;
     let lastTime = performance.now();
+    let didCenterRail = false;
+
+    const getLoopWidth = () => rail.scrollWidth / 3;
+
+    const normalizeLoop = () => {
+      const loopWidth = getLoopWidth();
+      if (loopWidth <= rail.clientWidth) return false;
+
+      if (!didCenterRail) {
+        rail.scrollLeft = loopWidth;
+        didCenterRail = true;
+        return true;
+      }
+
+      if (rail.scrollLeft < loopWidth * 0.5) {
+        rail.scrollLeft += loopWidth;
+      } else if (rail.scrollLeft > loopWidth * 1.5) {
+        rail.scrollLeft -= loopWidth;
+      }
+
+      return true;
+    };
 
     const tick = (time) => {
       const state = dragRef.current;
       const distance = time - lastTime;
-      const resetAt = rail.scrollWidth / 2;
-      const shouldMove = !state.paused && !state.dragging && resetAt > rail.clientWidth;
+      const canLoop = normalizeLoop();
+      const shouldMove = canLoop && !state.paused && !state.dragging;
       const targetVelocity = shouldMove ? 0.01 : 0;
 
       state.velocity += (targetVelocity - state.velocity) * 0.08;
 
       if (state.velocity > 0.0001) {
         rail.scrollLeft += distance * state.velocity;
-        if (rail.scrollLeft >= resetAt) {
-          rail.scrollLeft -= resetAt;
-        }
+        normalizeLoop();
       } else if (!shouldMove) {
         state.velocity = 0;
       }
@@ -143,7 +163,11 @@ function GalleryRail({ section, openLightbox, showHeader = true }) {
   const stopDrag = (event) => {
     const rail = railRef.current;
     if (rail && dragRef.current.pointerId === event.pointerId) {
-      rail.releasePointerCapture?.(event.pointerId);
+      try {
+        rail.releasePointerCapture?.(event.pointerId);
+      } catch {
+        // Touch scrolling is native on mobile, so there may be no pointer capture to release.
+      }
     }
 
     dragRef.current.dragging = false;
