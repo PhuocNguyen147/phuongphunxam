@@ -68,7 +68,7 @@ function GalleryRail({ section, openLightbox, showHeader = true }) {
       const resetAt = rail.scrollWidth / 2;
 
       if (!state.paused && !state.dragging && resetAt > rail.clientWidth) {
-        rail.scrollLeft += distance * 0.018;
+        rail.scrollLeft += distance * 0.012;
         if (rail.scrollLeft >= resetAt) {
           rail.scrollLeft -= resetAt;
         }
@@ -91,7 +91,7 @@ function GalleryRail({ section, openLightbox, showHeader = true }) {
     window.clearTimeout(resumeTimerRef.current);
     resumeTimerRef.current = window.setTimeout(() => {
       dragRef.current.paused = false;
-    }, 900);
+    }, 1200);
   };
 
   const startDrag = (event) => {

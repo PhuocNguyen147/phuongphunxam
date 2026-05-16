@@ -12,6 +12,7 @@ export default function App() {
   const [lightboxImg, setLightboxImg] = useState(null);
   const [content, setContent] = useState(null);
   const [contentError, setContentError] = useState('');
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     api.getContent()
@@ -22,6 +23,13 @@ export default function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [page]);
+
+  useEffect(() => {
+    const updateBackToTop = () => setShowBackToTop(window.scrollY > 420);
+    updateBackToTop();
+    window.addEventListener('scroll', updateBackToTop, { passive: true });
+    return () => window.removeEventListener('scroll', updateBackToTop);
+  }, []);
 
   return (
     <>
@@ -38,6 +46,17 @@ export default function App() {
       )}
 
       {page !== 'admin' && <Footer setPage={setPage} content={content} />}
+
+      {page !== 'admin' && showBackToTop && (
+        <button
+          aria-label="Quay về đầu trang"
+          className="back-to-top"
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          <i className="ph-light ph-arrow-up"></i>
+        </button>
+      )}
 
       {lightboxImg && (
         <div className="lightbox" onClick={() => setLightboxImg(null)}>

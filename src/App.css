@@ -53,6 +53,10 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     padding: 0 10px; /* Thêm padding bảo vệ viền mobile theo yêu cầu của bạn */
     font-family: var(--font-body);
@@ -378,9 +382,11 @@ header {
 }
 .gallery-rail {
     width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 4px 0 12px;
+    padding: 4px 24px 12px;
     touch-action: pan-x pan-y;
     cursor: grab;
     overscroll-behavior-x: contain;
@@ -406,7 +412,7 @@ header {
     justify-content: center;
 }
 .gallery-slide {
-    flex: 0 0 clamp(220px, 72vw, 340px);
+    flex: 0 0 clamp(220px, 72vw, 300px);
     aspect-ratio: 3 / 4;
     border: 1px solid var(--border-color);
     border-radius: 18px;
@@ -571,6 +577,33 @@ header {
 }
 .admin-login-card h1 {
     font-size: var(--fs-h2);
+}
+.password-field {
+    position: relative;
+}
+.password-field .input-field {
+    padding-right: 92px;
+}
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-btn);
+    background: var(--card-bg);
+    color: var(--primary-dark);
+    cursor: pointer;
+    font: 700 0.8rem var(--font-body);
+    transform: translateY(-50%);
+}
+.password-toggle i {
+    font-size: 18px;
 }
 .admin-shell {
     max-width: 1280px;
@@ -807,6 +840,33 @@ header {
     box-shadow: var(--shadow-hover);
     backdrop-filter: blur(12px);
 }
+.back-to-top {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 120;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(183, 110, 121, 0.28);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    color: var(--primary-dark);
+    box-shadow: var(--shadow-hover);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: transform 0.25s ease, background-color 0.25s ease;
+}
+.back-to-top:hover {
+    background: var(--primary);
+    color: var(--text-light);
+    transform: translateY(-3px);
+}
+.back-to-top i {
+    font-size: 22px;
+}
 
 /* Footer */
 footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; margin-top: 60px; }
@@ -828,6 +888,7 @@ footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; mar
     :root { --space-section-mb: var(--space-section-dt); }
     .container { padding: 0 48px; }
     .gallery-category-header { padding: 0 48px; grid-template-columns: minmax(220px, 360px) 1fr; align-items: end; }
+    .gallery-rail { padding: 4px 48px 12px; }
     .hero { padding-top: 96px; padding-bottom: 96px; }
     .footer-grid { grid-template-columns: repeat(2, 1fr); }
     .form-row { grid-template-columns: 1fr 1fr; }
@@ -862,6 +923,7 @@ footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; mar
     .main-srv-4 { grid-column: span 3; }
     .main-srv-5 { grid-column: span 3; }
     .main-srv-6 { grid-column: span 6; }
+    .gallery-slide { flex-basis: min(300px, calc((var(--container-max) - 144px) / 4)); }
     .service-showcase-grid { grid-template-columns: repeat(12, 1fr); }
     .service-showcase-main { grid-column: span 8; grid-row: span 2; }
     .service-side-card { grid-column: span 4; }
@@ -950,6 +1012,10 @@ footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; mar
     padding: 0 18px;
   }
 
+  .gallery-rail {
+    padding: 4px 18px 12px;
+  }
+
   .gallery-track {
     gap: 12px;
   }
@@ -966,6 +1032,13 @@ footer { border-top: 1px solid var(--border-color); padding: 100px 0 40px 0; mar
 
   .showcase-image-card {
     border-radius: 16px;
+  }
+
+  .back-to-top {
+    right: 14px;
+    bottom: 14px;
+    width: 44px;
+    height: 44px;
   }
 
   .admin-topbar {

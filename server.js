@@ -15,6 +15,13 @@ const BOOKINGS_FILE = join(DATA_DIR, 'bookings.json');
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const TOKEN_SECRET = process.env.ADMIN_TOKEN_SECRET || crypto.randomBytes(32).toString('hex');
 const TOKEN_TTL_MS = 1000 * 60 * 60 * 12;
+const SUPABASE_URL = String(process.env.SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const SUPABASE_STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'phuong-beauty';
+const SUPABASE_DATA_TABLE = process.env.SUPABASE_DATA_TABLE || 'app_data';
+const HAS_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
+const CONTENT_KEY = 'site_content';
+const BOOKINGS_KEY = 'bookings';
 
 const jsonHeaders = {
   'Content-Type': 'application/json; charset=utf-8',
@@ -97,15 +104,6 @@ function normalizeContent(content) {
   return nextContent;
 }
 
-async function ensureStorage() {
-  await mkdir(DATA_DIR, { recursive: true });
-  await mkdir(UPLOAD_DIR, { recursive: true });
-
-  if (!existsSync(BOOKINGS_FILE)) {
-    await writeJson(BOOKINGS_FILE, []);
-  }
-}
-
 async function readJson(file, fallback) {
   try {
     return JSON.parse(await readFile(file, 'utf8'));
@@ -116,6 +114,78 @@ async function readJson(file, fallback) {
 
 async function writeJson(file, data) {
   await writeFile(file, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
+}
+
+async function supabaseRequest(path, options = {}) {
+  const response = await fetch(`${SUPABASE_URL}${path}`, {
+    method: options.method || 'GET',
+    headers: {
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      ...options.headers,
+    },
+    body: options.body,
+  });
+
+  if (!response.ok) {
+    const message = await response.text().catch(() => '');
+    throw new Error(`Supabase error ${response.status}: ${message || response.statusText}`);
+  }
+
+  if (options.raw) return response;
+
+  const text = await response.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function readDataRecord(key, fallback) {
+  if (!HAS_SUPABASE) return readJson(key === CONTENT_KEY ? CONTENT_FILE : BOOKINGS_FILE, fallback);
+
+  const rows = await supabaseRequest(`/rest/v1/${SUPABASE_DATA_TABLE}?key=eq.${encodeURIComponent(key)}&select=value&limit=1`);
+  return rows?.[0]?.value ?? fallback;
+}
+
+async function writeDataRecord(key, value) {
+  if (!HAS_SUPABASE) {
+    await writeJson(key === CONTENT_KEY ? CONTENT_FILE : BOOKINGS_FILE, value);
+    return value;
+  }
+
+  const rows = await supabaseRequest(`/rest/v1/${SUPABASE_DATA_TABLE}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates,return=representation',
+    },
+    body: JSON.stringify({
+      key,
+      value,
+      updated_at: new Date().toISOString(),
+    }),
+  });
+
+  return rows?.[0]?.value ?? value;
+}
+
+async function ensureStorage() {
+  await mkdir(DATA_DIR, { recursive: true });
+  await mkdir(UPLOAD_DIR, { recursive: true });
+
+  if (!existsSync(BOOKINGS_FILE)) {
+    await writeJson(BOOKINGS_FILE, []);
+  }
+
+  if (!HAS_SUPABASE) return;
+
+  const existingContent = await readDataRecord(CONTENT_KEY, null);
+  if (!existingContent) {
+    await writeDataRecord(CONTENT_KEY, await readJson(CONTENT_FILE, {}));
+  }
+
+  const existingBookings = await readDataRecord(BOOKINGS_KEY, null);
+  if (!Array.isArray(existingBookings)) {
+    await writeDataRecord(BOOKINGS_KEY, await readJson(BOOKINGS_FILE, []));
+  }
 }
 
 async function readBody(req) {
@@ -204,7 +274,28 @@ async function handleImageUpload(req, res) {
     .replace(/^-|-$/g, '')
     .slice(0, 48) || 'image';
   const fileName = `${Date.now()}-${safeName}-${crypto.randomUUID().slice(0, 8)}.${extension}`;
-  await writeFile(join(UPLOAD_DIR, fileName), Buffer.from(match[2], 'base64'));
+  const imageBuffer = Buffer.from(match[2], 'base64');
+
+  if (HAS_SUPABASE) {
+    const storagePath = `uploads/${fileName}`;
+    const encodedPath = storagePath.split('/').map(encodeURIComponent).join('/');
+    await supabaseRequest(`/storage/v1/object/${encodeURIComponent(SUPABASE_STORAGE_BUCKET)}/${encodedPath}`, {
+      method: 'POST',
+      raw: true,
+      headers: {
+        'Content-Type': match[1] === 'image/jpg' ? 'image/jpeg' : match[1],
+        'x-upsert': 'false',
+      },
+      body: imageBuffer,
+    });
+
+    sendJson(res, 201, {
+      url: `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_STORAGE_BUCKET}/${encodedPath}`,
+    });
+    return;
+  }
+
+  await writeFile(join(UPLOAD_DIR, fileName), imageBuffer);
 
   sendJson(res, 201, { url: `/uploads/${fileName}` });
 }
@@ -272,7 +363,7 @@ async function router(req, res) {
     const url = new URL(req.url, `http://${req.headers.host}`);
 
     if (url.pathname === '/api/health') {
-      sendJson(res, 200, { ok: true });
+      sendJson(res, 200, { ok: true, storage: HAS_SUPABASE ? 'supabase' : 'json' });
       return;
     }
 
@@ -288,21 +379,21 @@ async function router(req, res) {
     }
 
     if (url.pathname === '/api/content' && req.method === 'GET') {
-      sendJson(res, 200, normalizeContent(await readJson(CONTENT_FILE, {})));
+      sendJson(res, 200, normalizeContent(await readDataRecord(CONTENT_KEY, {})));
       return;
     }
 
     if (url.pathname === '/api/content' && req.method === 'PUT') {
       if (!requireAdmin(req, res)) return;
       const content = await readBody(req);
-      await writeJson(CONTENT_FILE, content);
+      await writeDataRecord(CONTENT_KEY, content);
       sendJson(res, 200, content);
       return;
     }
 
     if (url.pathname === '/api/bookings' && req.method === 'GET') {
       if (!requireAdmin(req, res)) return;
-      sendJson(res, 200, await readJson(BOOKINGS_FILE, []));
+      sendJson(res, 200, await readDataRecord(BOOKINGS_KEY, []));
       return;
     }
 
@@ -314,7 +405,7 @@ async function router(req, res) {
         return;
       }
 
-      const bookings = await readJson(BOOKINGS_FILE, []);
+      const bookings = await readDataRecord(BOOKINGS_KEY, []);
       const booking = {
         id: crypto.randomUUID(),
         name: body.name.trim(),
@@ -329,7 +420,7 @@ async function router(req, res) {
         createdAt: new Date().toISOString(),
       };
       bookings.unshift(booking);
-      await writeJson(BOOKINGS_FILE, bookings);
+      await writeDataRecord(BOOKINGS_KEY, bookings);
       sendJson(res, 201, booking);
       return;
     }
@@ -338,11 +429,11 @@ async function router(req, res) {
       if (!requireAdmin(req, res)) return;
       const id = url.pathname.split('/').pop();
       const body = await readBody(req);
-      const bookings = await readJson(BOOKINGS_FILE, []);
+      const bookings = await readDataRecord(BOOKINGS_KEY, []);
       const nextBookings = bookings.map((booking) => (
         booking.id === id ? { ...booking, ...body, updatedAt: new Date().toISOString() } : booking
       ));
-      await writeJson(BOOKINGS_FILE, nextBookings);
+      await writeDataRecord(BOOKINGS_KEY, nextBookings);
       sendJson(res, 200, nextBookings.find((booking) => booking.id === id) || null);
       return;
     }

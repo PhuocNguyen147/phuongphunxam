@@ -55,22 +55,56 @@ Moi khu anh tu dong chay ngang nhe nhang. Khi khach re chuot vao tren may tinh h
 
 ## 5. Database cua website nam o dau?
 
-Ban hien dang dung database dang file JSON:
+Website co 2 che do luu du lieu:
+
+### Che do mac dinh: file JSON
 
 - Noi dung website: `data/siteContent.json`
 - Lich hen: `data/bookings.json`
 - Anh upload tu admin: `public/uploads`
 
-Khi chay local, cac file nay nam ngay trong thu muc du an tren may cua ban.
+Khi chay local, cac file nay nam ngay trong thu muc du an tren may cua ban. Khi deploy len internet bang goi mien phi, o dia nay co the la ephemeral filesystem, nghia la du lieu co the mat khi server restart, redeploy hoac bi spin down.
 
-Khi deploy len internet, cac file nay nam tren o dia cua server/instance ma hosting tao ra. Luu y quan trong: tren nhieu goi mien phi, o dia nay la ephemeral filesystem, nghia la du lieu co the mat khi server restart, redeploy hoac bi spin down.
+### Che do khuyen dung: Supabase mien phi
 
-Neu website chi demo hoac moi bat dau, cach nay dung duoc. Neu website da co khach dat lich that, nen nang cap sang:
+Neu cau hinh Supabase, website se luu:
 
-- Supabase/Neon/Postgres de luu lich hen va noi dung.
-- Cloudinary/Supabase Storage de luu anh upload.
+- Noi dung website va lich hen trong bang `app_data`.
+- Anh upload tu admin trong Supabase Storage bucket `phuong-beauty`.
 
-## 6. Deploy mien phi goi y
+Luc nay ban push code moi len GitHub hoac Render deploy lai thi noi dung admin, lich hen va anh upload van nam trong Supabase, khong bi quay lai nhu luc dau.
+
+Supabase Free hien phu hop giai doan moi bat dau: co 500 MB database va 1 GB file storage. Khi khach va anh tang nhieu, co the nang cap Supabase Pro hoac tach anh sang Cloudinary.
+
+## 6. Cai dat Supabase database mien phi
+
+1. Vao https://supabase.com va tao project moi.
+2. Trong Supabase, vao `SQL Editor`.
+3. Mo file `SUPABASE_SETUP.sql` trong repo nay, copy toan bo SQL va chay trong SQL Editor.
+4. Vao `Project Settings` -> `API`.
+5. Copy:
+   - `Project URL`
+   - `service_role secret key`
+6. Tren Render, vao web service -> `Environment`, them:
+
+```text
+SUPABASE_URL=Project URL cua ban
+SUPABASE_SERVICE_ROLE_KEY=service_role secret key cua ban
+SUPABASE_STORAGE_BUCKET=phuong-beauty
+```
+
+7. Bam `Save Changes` de Render redeploy.
+8. Mo `https://ten-app-cua-ban.onrender.com/api/health`. Neu thay `"storage":"supabase"` la website da dung database ngoai.
+
+Luu y bao mat: `SUPABASE_SERVICE_ROLE_KEY` la khoa rat manh, chi de trong Environment Variables cua Render, khong dua vao frontend, khong commit len GitHub.
+
+Option sau nay khi lon hon:
+
+- Van dung Supabase nhung nang cap Pro khi can nhieu database/storage hon.
+- Dung Neon Postgres de luu database va Cloudinary de luu anh neu anh/tai nguyen media tang manh.
+- Tach backend rieng va backup database dinh ky neu website co nhieu booking that.
+
+## 7. Deploy mien phi goi y
 
 ### Cach de nhat: deploy 1 service Node tren Render
 
@@ -97,6 +131,9 @@ npm start
 ```text
 ADMIN_PASSWORD=mat-khau-admin-cua-ban
 ADMIN_TOKEN_SECRET=chuoi-bi-mat-dai-ngau-nhien
+SUPABASE_URL=Project URL cua ban
+SUPABASE_SERVICE_ROLE_KEY=service_role secret key cua ban
+SUPABASE_STORAGE_BUCKET=phuong-beauty
 ```
 
 6. Deploy. Render se cap URL dang `https://ten-app.onrender.com`.
@@ -109,7 +146,7 @@ Koyeb co huong dan deploy Node.js/Express tu GitHub va chay bang `npm run start`
 
 Vercel Hobby la goi mien phi cho project ca nhan, nhung ung dung nay co backend Node chay dai va ghi file JSON. Neu deploy Vercel, nen tach frontend len Vercel va doi backend/database sang Supabase hoac mot API rieng. Ban khong nen dung file JSON tren Vercel lam database chinh.
 
-## 7. Kiem tra truoc khi deploy
+## 8. Kiem tra truoc khi deploy
 
 ```bash
 npm run lint
@@ -118,14 +155,15 @@ npm run build
 
 Neu ca hai lenh pass thi code san sang deploy.
 
-## 8. Ghi chu bao mat
+## 9. Ghi chu bao mat
 
 - Doi `ADMIN_PASSWORD` truoc khi public website.
 - Khong commit file `.env` len GitHub.
 - Khong dung `admin123` cho website that.
-- File JSON phu hop giai doan dau; neu co booking that, nen dung database ben ngoai de khong mat du lieu.
+- Khong commit `SUPABASE_SERVICE_ROLE_KEY` len GitHub.
+- File JSON phu hop giai doan dau; neu co booking that, nen dung Supabase de khong mat du lieu.
 
-## 9. Doi mat khau admin sau khi deploy Render
+## 10. Doi mat khau admin sau khi deploy Render
 
 Mat khau admin khong nam trong code. Mat khau duoc doc tu bien moi truong `ADMIN_PASSWORD` tren Render.
 
@@ -141,7 +179,7 @@ De doi mat khau:
 
 Neu muon tat ca phien dang nhap cu bi mat hieu luc ngay, doi them `ADMIN_TOKEN_SECRET` sang mot chuoi moi, dai va kho doan. Neu chi doi `ADMIN_PASSWORD`, nhung ai da dang nhap truoc do co the con token cu toi da 12 gio.
 
-## 10. Deploy ban update len Render sau khi push GitHub
+## 11. Deploy ban update len Render sau khi push GitHub
 
 Neu Render dang bat auto deploy:
 
@@ -169,8 +207,11 @@ Neu Render khong tu deploy:
 
 Neu sau nay ban merge code vao `main`, vao Settings cua service tren Render va doi Branch tu `codex/admin-gallery-booking` sang `main`, hoac tao service moi deploy tu `main`.
 
-## 11. Tai lieu tham khao
+## 12. Tai lieu tham khao
 
+- Supabase Pricing: https://supabase.com/docs/pricing
+- Supabase Storage: https://supabase.com/docs/guides/storage
+- Cloudinary Pricing: https://cloudinary.com/pricing
 - Render Free: https://render.com/docs/free
 - Koyeb Node/Express deploy: https://www.koyeb.com/docs/deploy/express
 - Vercel Hobby: https://vercel.com/docs/plans/hobby

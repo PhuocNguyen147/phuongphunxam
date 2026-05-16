@@ -95,6 +95,7 @@ export default function Admin({ initialContent, setContent }) {
   const [bookingView, setBookingView] = useState('new');
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(api.getAdminToken()));
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
 
   useEffect(() => {
@@ -460,14 +461,25 @@ export default function Admin({ initialContent, setContent }) {
           </div>
           <h1>Đăng nhập admin</h1>
           <p>Đăng nhập để sửa nội dung, tải ảnh và xem lịch hẹn.</p>
-          <input
-            className="input-field"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Mật khẩu admin"
-            required
-          />
+          <div className="password-field">
+            <input
+              className="input-field"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Mật khẩu admin"
+              required
+            />
+            <button
+              aria-label={showPassword ? 'Ẩn mật khẩu' : 'Xem mật khẩu'}
+              className="password-toggle"
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+            >
+              <i className={`ph-light ${showPassword ? 'ph-eye-slash' : 'ph-eye'}`}></i>
+              <span>{showPassword ? 'Ẩn' : 'Xem'}</span>
+            </button>
+          </div>
           <button className="btn btn-primary" type="submit">Đăng nhập</button>
           {loginError && <p className="form-status">{loginError}</p>}
           <a className="text-button" href="/">Quay lại website</a>
