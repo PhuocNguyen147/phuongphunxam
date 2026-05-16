@@ -50,6 +50,7 @@ function GalleryRail({ section, openLightbox, showHeader = true }) {
     pointerId: null,
     startScroll: 0,
     startX: 0,
+    velocity: 0,
   });
   const resumeTimerRef = useRef(null);
 
@@ -66,12 +67,18 @@ function GalleryRail({ section, openLightbox, showHeader = true }) {
       const state = dragRef.current;
       const distance = time - lastTime;
       const resetAt = rail.scrollWidth / 2;
+      const shouldMove = !state.paused && !state.dragging && resetAt > rail.clientWidth;
+      const targetVelocity = shouldMove ? 0.01 : 0;
 
-      if (!state.paused && !state.dragging && resetAt > rail.clientWidth) {
-        rail.scrollLeft += distance * 0.012;
+      state.velocity += (targetVelocity - state.velocity) * 0.08;
+
+      if (state.velocity > 0.0001) {
+        rail.scrollLeft += distance * state.velocity;
         if (rail.scrollLeft >= resetAt) {
           rail.scrollLeft -= resetAt;
         }
+      } else if (!shouldMove) {
+        state.velocity = 0;
       }
 
       lastTime = time;
@@ -222,7 +229,7 @@ function ServiceShowcase({ showcase, openLightbox }) {
 
         {(showcase.cards || []).map((card) => (
           <div className={`bento-card service-side-card ${card.tone === 'primary' ? 'bg-primary' : ''}`} key={card.title}>
-            <i className={`ph-light ${card.icon || 'ph-sparkle'} card-icon`}></i>
+            {card.icon && <i className={`ph-light ${card.icon} card-icon`}></i>}
             <h3>{card.title}</h3>
             <p>{card.description}</p>
           </div>

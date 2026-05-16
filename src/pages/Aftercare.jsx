@@ -68,7 +68,7 @@ export default function Aftercare({ content }) {
         <section className="container" style={{ marginTop: '24px' }} key={section.id || section.title}>
           <div className="section-header" style={{ alignItems: 'flex-start', textAlign: 'left', marginBottom: '24px' }}>
             <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <i className={`ph-light ${section.icon || 'ph-sparkle'}`} style={{ color: 'var(--primary)' }}></i> {section.title}
+              {section.icon && <i className={`ph-light ${section.icon}`} style={{ color: 'var(--primary)' }}></i>} {section.title}
             </h2>
           </div>
           <div className="bento-grid">

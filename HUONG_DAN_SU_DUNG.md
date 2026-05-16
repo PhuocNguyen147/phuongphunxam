@@ -43,6 +43,8 @@ Vao `/admin`, dang nhap, sau do:
 
 Sau khi sua noi dung hoac them anh, bam `Luu thay doi`.
 
+O cac muc co `Icon hien thi`, ban chi can bam chon icon co san. Chon `Khong dung` neu muon an icon khoi phan do.
+
 ## 4. Hieu ung anh tren website
 
 Thu vien anh duoc tach thanh 3 khu rieng:

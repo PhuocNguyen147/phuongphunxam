@@ -1,14 +1,32 @@
 import { useEffect, useState } from 'react';
 import { api, resolveMediaUrl } from '../api';
 
-const emptyService = { title: '', description: '', icon: 'ph-sparkle' };
+const emptyService = { title: '', description: '', icon: '' };
 const emptyImage = { title: '', url: '' };
 const emptyPrice = { name: '', price: '', description: '', featured: false };
-const emptyShowcaseCard = { title: '', description: '', icon: 'ph-sparkle', tone: 'default' };
+const emptyShowcaseCard = { title: '', description: '', icon: '', tone: 'default' };
 const emptyShowcaseStat = { value: '', label: '' };
 const emptyShowcaseSection = { id: 'showcase', title: 'Khu nội dung mới', description: '', layout: 'grid', images: [] };
-const emptyCareSection = { id: 'section', title: 'Nhóm chăm sóc mới', icon: 'ph-sparkle', cards: [] };
-const emptyCareCard = { title: 'Hướng dẫn mới', icon: 'ph-check-circle', tone: 'default', description: '', items: [''] };
+const emptyCareSection = { id: 'section', title: 'Nhóm chăm sóc mới', icon: '', cards: [] };
+const emptyCareCard = { title: 'Hướng dẫn mới', icon: '', tone: 'default', description: '', items: [''] };
+const iconOptions = [
+  { value: '', label: 'Không dùng', icon: 'ph-prohibit' },
+  { value: 'ph-sparkle', label: 'Lấp lánh', icon: 'ph-sparkle' },
+  { value: 'ph-flower-lotus', label: 'Hoa sen', icon: 'ph-flower-lotus' },
+  { value: 'ph-eye', label: 'Đôi mắt', icon: 'ph-eye' },
+  { value: 'ph-pen-nib', label: 'Chân mày', icon: 'ph-pen-nib' },
+  { value: 'ph-drop', label: 'Môi màu', icon: 'ph-drop' },
+  { value: 'ph-plant', label: 'Organic', icon: 'ph-plant' },
+  { value: 'ph-heart', label: 'Tận tâm', icon: 'ph-heart' },
+  { value: 'ph-star', label: 'Nổi bật', icon: 'ph-star' },
+  { value: 'ph-medal', label: 'Giải thưởng', icon: 'ph-medal' },
+  { value: 'ph-shield-check', label: 'An toàn', icon: 'ph-shield-check' },
+  { value: 'ph-check-circle', label: 'Nên làm', icon: 'ph-check-circle' },
+  { value: 'ph-x-circle', label: 'Cần tránh', icon: 'ph-x-circle' },
+  { value: 'ph-chat-circle-text', label: 'Tư vấn', icon: 'ph-chat-circle-text' },
+  { value: 'ph-calendar-check', label: 'Lịch hẹn', icon: 'ph-calendar-check' },
+  { value: 'ph-headset', label: 'Hỗ trợ', icon: 'ph-headset' },
+];
 const defaultGallerySections = [
   { id: 'lips', label: 'Ảnh làm môi', description: '', images: [] },
   { id: 'lashes', label: 'Ảnh làm mi', description: '', images: [] },
@@ -51,6 +69,28 @@ function Field({ label, children }) {
       <span>{label}</span>
       {children}
     </label>
+  );
+}
+
+function IconPicker({ label, value, onChange }) {
+  return (
+    <div className="admin-field icon-picker-field">
+      <span>{label}</span>
+      <div className="icon-picker">
+        {iconOptions.map((option) => (
+          <button
+            aria-pressed={value === option.value}
+            className={`icon-choice ${value === option.value ? 'active' : ''}`}
+            key={option.value || 'none'}
+            type="button"
+            onClick={() => onChange(option.value)}
+          >
+            <i className={`ph-light ${option.icon}`}></i>
+            <span>{option.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -598,9 +638,11 @@ export default function Admin({ initialContent, setContent }) {
                   <Field label="Tiêu đề thẻ">
                     <input value={card.title} onChange={(event) => updateServiceShowcaseCard(index, 'title', event.target.value)} />
                   </Field>
-                  <Field label="Icon Phosphor">
-                    <input value={card.icon} onChange={(event) => updateServiceShowcaseCard(index, 'icon', event.target.value)} />
-                  </Field>
+                  <IconPicker
+                    label="Icon hiển thị"
+                    value={card.icon || ''}
+                    onChange={(value) => updateServiceShowcaseCard(index, 'icon', value)}
+                  />
                   <Field label="Màu thẻ">
                     <select value={card.tone} onChange={(event) => updateServiceShowcaseCard(index, 'tone', event.target.value)}>
                       <option value="default">Sáng</option>
@@ -661,9 +703,11 @@ export default function Admin({ initialContent, setContent }) {
                 <Field label="Mô tả">
                   <textarea value={service.description} onChange={(event) => updateListItem('services', index, 'description', event.target.value)} rows="3" />
                 </Field>
-                <Field label="Icon Phosphor">
-                  <input value={service.icon} onChange={(event) => updateListItem('services', index, 'icon', event.target.value)} />
-                </Field>
+                <IconPicker
+                  label="Icon hiển thị"
+                  value={service.icon || ''}
+                  onChange={(value) => updateListItem('services', index, 'icon', value)}
+                />
                 <button className="text-button" type="button" onClick={() => removeListItem('services', index)}>Xóa</button>
               </div>
             ))}
@@ -817,9 +861,11 @@ export default function Admin({ initialContent, setContent }) {
                   <Field label="Tên nhóm">
                     <input value={section.title} onChange={(event) => updateCareSection(sectionIndex, 'title', event.target.value)} />
                   </Field>
-                  <Field label="Icon Phosphor">
-                    <input value={section.icon} onChange={(event) => updateCareSection(sectionIndex, 'icon', event.target.value)} />
-                  </Field>
+                  <IconPicker
+                    label="Icon hiển thị"
+                    value={section.icon || ''}
+                    onChange={(value) => updateCareSection(sectionIndex, 'icon', value)}
+                  />
                 </div>
                 <div className="admin-panel-heading">
                   <h3>{section.title || 'Nhóm chưa đặt tên'}</h3>
@@ -834,9 +880,11 @@ export default function Admin({ initialContent, setContent }) {
                     <Field label="Tiêu đề thẻ">
                       <input value={card.title} onChange={(event) => updateCareCard(sectionIndex, cardIndex, 'title', event.target.value)} />
                     </Field>
-                    <Field label="Icon">
-                      <input value={card.icon} onChange={(event) => updateCareCard(sectionIndex, cardIndex, 'icon', event.target.value)} />
-                    </Field>
+                    <IconPicker
+                      label="Icon hiển thị"
+                      value={card.icon || ''}
+                      onChange={(value) => updateCareCard(sectionIndex, cardIndex, 'icon', value)}
+                    />
                     <Field label="Kiểu hiển thị">
                       <select value={card.tone} onChange={(event) => updateCareCard(sectionIndex, cardIndex, 'tone', event.target.value)}>
                         <option value="default">Từng bước</option>
