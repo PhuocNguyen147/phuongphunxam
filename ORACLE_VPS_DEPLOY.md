@@ -141,10 +141,17 @@ Thanh ten mien cua ban, vi du:
 server_name phuongbeauty.com www.phuongbeauty.com;
 ```
 
+Neu chua co ten mien va chi muon test bang IP public cua VPS, doi thanh:
+
+```nginx
+server_name _;
+```
+
 Bat cau hinh:
 
 ```bash
 sudo ln -sf /etc/nginx/sites-available/phuong-beauty /etc/nginx/sites-enabled/phuong-beauty
+sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl reload nginx
 ```
@@ -153,6 +160,12 @@ Bay gio mo:
 
 ```txt
 http://ten-mien-cua-ban.com
+```
+
+Hoac neu dang test bang IP:
+
+```txt
+http://YOUR_SERVER_IP
 ```
 
 ## 8. Cai HTTPS mien phi
