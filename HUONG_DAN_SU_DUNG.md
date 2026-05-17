@@ -144,6 +144,19 @@ SUPABASE_STORAGE_BUCKET=phuong-beauty
 
 Koyeb co huong dan deploy Node.js/Express tu GitHub va chay bang `npm run start`. Voi code hien tai, ban chon repository, chon buildpack Node.js, build command `npm install && npm run build`, start command `npm start`.
 
+### Lua chon khac: Oracle Cloud VPS Free
+
+Neu muon chay website tren VPS mien phi va khong bi ngu nhu Render Free, co the dung Oracle Cloud Always Free. Repo nay da co san bo file deploy:
+
+- `Dockerfile`
+- `docker-compose.oracle.yml`
+- `deploy/oracle/bootstrap-ubuntu.sh`
+- `deploy/oracle/deploy.sh`
+- `deploy/oracle/nginx-phuong-beauty.conf`
+- `ORACLE_VPS_DEPLOY.md`
+
+Hay lam theo file `ORACLE_VPS_DEPLOY.md`. Cach nay giu nguyen code React + Node hien tai, chay bang Docker tren Ubuntu VPS, va dung Nginx + Certbot de gan ten mien HTTPS.
+
 ### Khi nao dung Vercel?
 
 Vercel Hobby la goi mien phi cho project ca nhan, nhung ung dung nay co backend Node chay dai va ghi file JSON. Neu deploy Vercel, nen tach frontend len Vercel va doi backend/database sang Supabase hoac mot API rieng. Ban khong nen dung file JSON tren Vercel lam database chinh.
@@ -215,5 +228,6 @@ Neu sau nay ban merge code vao `main`, vao Settings cua service tren Render va d
 - Supabase Storage: https://supabase.com/docs/guides/storage
 - Cloudinary Pricing: https://cloudinary.com/pricing
 - Render Free: https://render.com/docs/free
+- Oracle Always Free: https://docs.oracle.com/iaas/Content/FreeTier/resourceref.htm
 - Koyeb Node/Express deploy: https://www.koyeb.com/docs/deploy/express
 - Vercel Hobby: https://vercel.com/docs/plans/hobby

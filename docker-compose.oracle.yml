@@ -1,0 +1,18 @@
+services:
+  phuong-beauty:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: phuong-beauty
+    env_file:
+      - .env.production
+    ports:
+      - "127.0.0.1:8787:8787"
+    restart: unless-stopped
+    volumes:
+      - phuong_data:/app/data
+      - phuong_uploads:/app/public/uploads
+
+volumes:
+  phuong_data:
+  phuong_uploads:
